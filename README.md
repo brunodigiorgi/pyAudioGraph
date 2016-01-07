@@ -44,7 +44,7 @@ Usage
 Conventions
 -----------
 
-* Sound buffers are numpy with shape (nChannels, nSamples)
+* Sound buffers are numpy.ndarray with shape (nChannels, nSamples)
 * Units are connected using wires (audio-rate and control-rate)
 * Connections are estabilished between an output Wire and an input Wire with the method Wire.plugInto(Wire)
 * Wires are usually prefixed with w_ for easy usage with code completion
