@@ -1,15 +1,14 @@
 Requirements
 ------------
 
-* pyAudio
+* [pyAudio](http://people.csail.mit.edu/hubert/pyaudio/)
 * numpy
 
 Installation
 ------------
 
-1. Copy the directory on your python system path
-2. import as a package
-	
+Copy the directory on your python system path, then
+
 	import pyAudioGraph as ag
 
 Usage
