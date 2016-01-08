@@ -5,33 +5,33 @@ class AudioBuffer:
     """
     multichannel buffer, based on numpy ndarray
     """
-    def __init__(self, nChannels, length):
-        self.nChannels = nChannels
+    def __init__(self, nchannels, length):
+        self.nchannels = nchannels
         self.length = length
-        self.buf = np.zeros((self.nChannels, self.length), dtype=np.float32)
+        self.buf = np.zeros((self.nchannels, self.length), dtype=np.float32)
 
     def clear(self, length=None, start=0):
         if(length is None):
             length = self.length
-        self.buf[:, start:start+length] = 0
+        self.buf[:, start:start + length] = 0
 
-    def write(self, length, start, inBuffer, inOffset=0):
-        assert(self.length >= start and inBuffer.ndim == 2 and inBuffer.shape[0] == self.nChannels)
-        toWrite = np.minimum(length, self.length - start)  # how much space to fill
-        self.buf[:, start:start + toWrite] = inBuffer[:, inOffset:inOffset + toWrite]
-        return toWrite
+    def write(self, length, start, in_buffer, in_offset=0):
+        assert(self.length >= start and in_buffer.ndim == 2 and in_buffer.shape[0] == self.nchannels)
+        to_write = np.minimum(length, self.length - start)  # how much space to fill
+        self.buf[:, start:start + to_write] = in_buffer[:, in_offset:in_offset + to_write]
+        return to_write
 
-    def accumulate(self, length, start, inBuffer, inOffset=0, inScale=1):
-        assert(self.length >= start and inBuffer.ndim == 2 and inBuffer.shape[0] == self.nChannels)
-        toWrite = np.minimum(length, self.length - start)  # how much space to fill
-        self.buf[:, start:start + toWrite] += inScale * inBuffer[:, inOffset:inOffset + toWrite]
-        return toWrite
+    def accumulate(self, length, start, in_buffer, in_offset=0, in_scale=1):
+        assert(self.length >= start and in_buffer.ndim == 2 and in_buffer.shape[0] == self.nchannels)
+        to_write = np.minimum(length, self.length - start)  # how much space to fill
+        self.buf[:, start:start + to_write] += in_scale * in_buffer[:, in_offset:in_offset + to_write]
+        return to_write
 
-    def read(self, length, start, outBuffer, outOffset=0):
-        assert(self.length >= start and outBuffer.ndim == 2 and outBuffer.shape[0] == self.nChannels)
-        toRead = np.minimum(length, self.length - start)  # how much space to fill
-        outBuffer[:, outOffset:outOffset + toRead] = self.buf[:, start:start + toRead]
-        return toRead
+    def read(self, length, start, out_buffer, out_offset=0):
+        assert(self.length >= start and out_buffer.ndim == 2 and out_buffer.shape[0] == self.nchannels)
+        to_read = np.minimum(length, self.length - start)  # how much space to fill
+        out_buffer[:, out_offset:out_offset + to_read] = self.buf[:, start:start + to_read]
+        return to_read
 
 
 class RingBuffer:
@@ -44,30 +44,30 @@ class RingBuffer:
 
     usage as Framer:
     1) write the a frame (incoming frames are non overlapping)
-       advanceWriteIndex(frame length)
+       advance_write_index(frame length)
 
     2) while(available() > needed)
         2a) read a frame from the tail
-        2b) advanceReadIndex(hopsize)
+        2b) advance_read_index(hopsize)
 
     usage as Overlapper:
     1) accumulate a buffer of N samples
-       advanceWriteIndex(M) with M<N
+       advance_write_index(M) with M<N
 
     2) read M samples
-       advanceReadIndex(M)
+       advance_read_index(M)
     """
-    def __init__(self, nChannels, length):
-        self._nChannels = nChannels
+    def __init__(self, nchannels, length):
+        self._nchannels = nchannels
         self._length = length
-        self._buf = AudioBuffer(self._nChannels, self._length)
+        self._buf = AudioBuffer(self._nchannels, self._length)
         self._head = 0
         self._tail = 0
         self._available = 0
 
     def resize(self, length):
         self._length = length
-        self._buf = AudioBuffer(self._nChannels, self._length)
+        self._buf = AudioBuffer(self._nchannels, self._length)
         self.clear()
 
     def clear(self):
@@ -76,14 +76,14 @@ class RingBuffer:
         self._tail = 0
         self._available = 0
 
-    def write(self, inBuffer):
-        assert(inBuffer.ndim == 2 and inBuffer.shape[0] == self._nChannels)
+    def write(self, in_buffer):
+        assert(in_buffer.ndim == 2 and in_buffer.shape[0] == self._nchannels)
 
-        remaining = np.minimum(inBuffer.shape[1], self._length - self._available)
+        remaining = np.minimum(in_buffer.shape[1], self._length - self._available)
         count = 0
 
         while(remaining > 0):
-            written = self._buf.write(remaining, self._head, inBuffer, inOffset=count)
+            written = self._buf.write(remaining, self._head, in_buffer, in_offset=count)
 
             self._head += written
             if(self._head == self._length):
@@ -94,15 +94,15 @@ class RingBuffer:
 
         return count
 
-    def accumulate(self, inBuffer, offset=0, inScale=1):
-        assert(inBuffer.ndim == 2 and inBuffer.shape[0] == self._nChannels)
+    def accumulate(self, in_buffer, offset=0, in_scale=1):
+        assert(in_buffer.ndim == 2 and in_buffer.shape[0] == self._nchannels)
 
-        remaining = np.minimum(inBuffer.shape[1], self._length - self._available)
+        remaining = np.minimum(in_buffer.shape[1], self._length - self._available)
         count = 0
         head_tmp = self._head + offset
 
         while(remaining > 0):
-            written = self._buf.accumulate(remaining, head_tmp, inBuffer, inOffset=count, inScale=inScale)
+            written = self._buf.accumulate(remaining, head_tmp, in_buffer, in_offset=count, in_scale=in_scale)
 
             head_tmp += written
             if(head_tmp == self._length):
@@ -112,7 +112,7 @@ class RingBuffer:
 
         return count
 
-    def advanceWriteIndex(self, n):
+    def advance_write_index(self, n):
         """
         advance head
         """
@@ -130,15 +130,15 @@ class RingBuffer:
 
         return count
 
-    def read(self, outBuffer):
-        assert(outBuffer.ndim == 2 and outBuffer.shape[0] == self._nChannels)
+    def read(self, out_buffer):
+        assert(out_buffer.ndim == 2 and out_buffer.shape[0] == self._nchannels)
 
-        remaining = np.minimum(outBuffer.shape[1], self._available)
+        remaining = np.minimum(out_buffer.shape[1], self._available)
         count = 0
         tail_tmp = self._tail
 
         while(remaining):
-            read = self._buf.read(remaining, tail_tmp, outBuffer, outOffset=count)
+            read = self._buf.read(remaining, tail_tmp, out_buffer, out_offset=count)
 
             tail_tmp += read
             if(tail_tmp == self._length):
@@ -148,7 +148,7 @@ class RingBuffer:
 
         return count
 
-    def advanceReadIndex(self, n):
+    def advance_read_index(self, n):
         """
         advance tail
         """

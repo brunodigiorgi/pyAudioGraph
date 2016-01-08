@@ -10,15 +10,15 @@ class Wire:
     usage:
     1) in your node create input and output wires (use a common prefix, as "w_")
     2) connect them when creating the graph:
-      diskInNode.w_out.plugInto(mixerNode.w_in[0])
-      sineGenNode.w_out.plugInto(mixerNode.w_in[1])
+      diskInNode.w_out.plug_into(mixerNode.w_in[0])
+      sineGenNode.w_out.plug_into(mixerNode.w_in[1])
 
     IMPORTANT!
     syntax
     since python do not have explicit pointer syntax,
     I encapsulated the behavior in the setter methods:
-    wire.setValue(3)
-    wire.setBuffer(numpy_ndarray)
+    wire.set_value(3)
+    wire.set_buffer(numpy_ndarray)
 
     NEVER set value or buffer like this:
     wire._value = 3
@@ -44,23 +44,23 @@ class Wire:
         # output wires allocate memory
         if(self.wiretype == Wire.wiretype_output):
             if(self.rate == Wire.audioRate):
-                self._buf = np.zeros((1, world.bufLen), dtype=np.float32)
+                self._buf = np.zeros((1, world.buf_len), dtype=np.float32)
             elif(self.rate == Wire.controlRate):
                 self._value = np.array([0], dtype=np.float32)
 
-    def setBuffer(self, inBuffer):
+    def set_buffer(self, in_buffer):
         """
-        inBuffer: numpy ndarray 1-dim, length=world.bufLen
+        in_buffer: numpy ndarray 1-dim, length=world.buf_len
         """
-        self._buf[0, :] = inBuffer[:]
+        self._buf[0, :] = in_buffer[:]
 
-    def setValue(self, inValue):
+    def set_value(self, in_value):
         """
-        inValue: scalar
+        in_value: scalar
         """
-        self._value[0] = inValue
+        self._value[0] = in_value
 
-    def plugInto(self, wire):
+    def plug_into(self, wire):
         assert((wire is not None) and
                ((self.wiretype == Wire.wiretype_output) and
                 (wire.wiretype == Wire.wiretype_input)) and

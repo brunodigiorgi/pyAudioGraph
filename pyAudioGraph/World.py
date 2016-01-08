@@ -4,48 +4,48 @@ import numpy as np
 
 
 class World:
-    def __init__(self, bufLen=64, sampleRate=44100, nChannels=2):
-        self.bufLen = bufLen
-        self.sampleRate = sampleRate
-        self.nChannels = nChannels
+    def __init__(self, buf_len=64, sample_rate=44100, nchannels=2):
+        self.buf_len = buf_len
+        self.sample_rate = sample_rate
+        self.nchannels = nchannels
 
         self._audioDriver = AudioDriver(self)
         self._topGroup = Group(self)
         self._isRunning = False
 
-        self._allocateBuffers()
+        self._allocate_buffers()
 
         self.t = 0
         self.fr = 400
 
-    def _allocateBuffers(self):
-        self.inBuffer = np.zeros((self.nChannels, self.bufLen), dtype=np.float32)
-        self.outBuffer = np.zeros((self.nChannels, self.bufLen), dtype=np.float32)
+    def _allocate_buffers(self):
+        self.inBuffer = np.zeros((self.nchannels, self.buf_len), dtype=np.float32)
+        self.outBuffer = np.zeros((self.nchannels, self.buf_len), dtype=np.float32)
 
-    def addHead(self, node):
-        self._topGroup.addHead(node)
+    def add_head(self, node):
+        self._topGroup.add_head(node)
 
-    def addTail(self, node):
-        self._topGroup.addTail(node)
+    def add_tail(self, node):
+        self._topGroup.add_tail(node)
 
     def start(self):
-        if(self._isRunning == False):
+        if(not self._isRunning):
             self._audioDriver.start()
             self._isRunning = True
 
     def run(self, in_data):
         # deinterlave
-        self.inBuffer[:] = np.fromstring(in_data, dtype=np.float32).reshape((self.nChannels, -1), order='F')
+        self.inBuffer[:] = np.fromstring(in_data, dtype=np.float32).reshape((self.nchannels, -1), order='F')
 
         # give self.buffers[0] to in unit
-        self._topGroup.calcFunc()
+        self._topGroup.calc_func()
 
         # interlave
         out_data = self.outBuffer.tostring(order='F')
         return out_data
 
     def stop(self):
-        if(self._isRunning == True):
+        if(self._isRunning):
             self._audioDriver.stop()
             self._isRunning = False
 

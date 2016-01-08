@@ -4,16 +4,16 @@ class Node:
         self.enabled = True
         self.parent = None
 
-    def calcFunc(self):
+    def calc_func(self):
         pass
 
-    def addAfter(self, node):
+    def add_after(self, node):
         assert(node.parent is not None)
-        node.parent.insertAfter(self, node)
+        node.parent.insert_after(self, node)
 
-    def addBefore(self, node):
+    def add_before(self, node):
         assert(node.parent is not None)
-        node.parent.insertBefore(self, node)
+        node.parent.insert_before(self, node)
 
 
 class Group(Node):
@@ -21,31 +21,31 @@ class Group(Node):
         super().__init__(world)
         self.nodesList = []
 
-    def addHead(self, node):
+    def add_head(self, node):
         node.parent = self
         self.nodesList.insert(0, node)
 
-    def addTail(self, node):
+    def add_tail(self, node):
         node.parent = self
         self.nodesList.append(node)
 
-    def insertAfter(self, node1, node2):
+    def insert_after(self, node1, node2):
         """ insert node1 after node2 """
         assert(node2.parent == self)
         i = self.nodesList.index(node2)
         node1.parent = self
         self.nodesList.insert(i + 1, node1)
 
-    def insertBefore(self, node1, node2):
+    def insert_before(self, node1, node2):
         """ insert node1 before node2 """
         assert(node2.parent == self)
         i = self.nodesList.index(node2)
         node1.parent = self
         self.nodesList.insert(i, node1)
 
-    def calcFunc(self):
+    def calc_func(self):
         for n in self.nodesList:
-            n.calcFunc()
+            n.calc_func()
 
     def clear(self):
         self.nodesList = []

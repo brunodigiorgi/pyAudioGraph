@@ -13,12 +13,12 @@ class SinOsc(Node):
         self.w_freq = Wire(self.world, Wire.controlRate, Wire.wiretype_input)
         self.w_out = Wire(self.world, Wire.audioRate, Wire.wiretype_output)
         self.phase = 0
-        self.w_freq.setValue(400)
+        self.w_freq.set_value(400)
 
-    def calcFunc(self):
-        bufLen = self.world.bufLen
+    def calc_func(self):
+        buf_len = self.world.buf_len
         sr = self.world.sampleRate
         f = self.w_freq._value
-        p = ramp(self.phase, bufLen, f / sr * 2 * np.pi)
-        self.w_out.setBuffer(np.sin(p))
+        p = ramp(self.phase, buf_len, f / sr * 2 * np.pi)
+        self.w_out.set_buffer(np.sin(p))
         self.phase = p[-1] + f / sr * 2 * np.pi

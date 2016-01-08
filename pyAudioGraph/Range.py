@@ -19,10 +19,10 @@ class RangeQueue:
         r is a Range
         """
         self.queue.append(r)
-        self.length += r.length        
+        self.length += r.length
 
-    def pushRangeQueue(self, rangeQueue):
-        for r in rangeQueue.queue:
+    def push_range_queue(self, range_queue):
+        for r in range_queue.queue:
             self.push(r)
 
     def front(self):

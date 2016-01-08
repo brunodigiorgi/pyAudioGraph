@@ -19,29 +19,29 @@ Usage
 
 	# 1. Create the units
 
-	world = ag.World(nChannels=2, bufLen=512)
-	
-	wav_file = 'myWavFile.wav'  # only signed 16/32 bit supported
-	audioStream = ag.AudioStream_WaveFile(wav_file)
+	world = ag.World(nchannels=2, buf_len=512)
+
+	wav_file = 'outputFile.wav'  # only signed 16/32 bit supported
+	audioStream = ag.AudioStreamWaveFile(wav_file)
 	diskInUnit = ag.DiskInUnit(world, audioStream)
 
 	outUnit = ag.OutUnit(world)
 
 	# 2. Connect the units
-	
-	for i in range(diskInUnit.nChannels):
-		diskInUnit.w_out[i].plugInto(outUnit.w_in[i])
+
+	for i in range(diskInUnit.nchannels):
+	    diskInUnit.w_out[i].plug_into(outUnit.w_in[i])
 
 	# 3. Create the sequence of unit calls
 
-	world.addHead(diskInUnit)
-	outUnit.addAfter(diskInUnit)
+	world.add_head(diskInUnit)
+	outUnit.add_after(diskInUnit)
 
 	# 4. Run 
 
 	import time
 	world.start()
-	time.sleep(10)
+	time.sleep(5)
 	world.stop()
 
 Conventions
@@ -50,8 +50,8 @@ Conventions
 * Sound buffers are numpy.ndarray with shape (nChannels, nSamples)
 * Units are connected using wires (audio-rate and control-rate)
 * Connections are estabilished between an output Wire and an input Wire with the method Wire.plugInto(Wire)
-* Wires are usually prefixed with w_ for easy usage with code completion
-* Sometimes control rate wires change parameters of the units (SinOsc.w_freq). The method setValue is threadsafe.
+* Wires are prefixed with w_ for easy usage with code completion
+* Sometimes input control-rate wires change parameters of the units (for example: SinOsc.w_freq). The method setValue is threadsafe, so that you can for example change the frequency of the oscillator from the main/gui thread by calling SinOsc.w_freq.setValue()
 
 Other Units
 -----------

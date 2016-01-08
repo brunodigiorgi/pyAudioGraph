@@ -7,34 +7,34 @@ from .CmdQueue import AsyncCmdQueue
 
 
 class DiskInUnit(Node):
-    def __init__(self, world, audioStream, cmdQueue=None):
+    def __init__(self, world, audio_stream, cmd_queue=None):
         super().__init__(world)
-        self.nChannels = audioStream.nChannels
-        self.length = audioStream.length
-        self.sampleRate = audioStream.sampleRate
+        self.nchannels = audio_stream.nchannels
+        self.length = audio_stream.length
+        self.sampleRate = audio_stream.sampleRate
 
-        if(cmdQueue is None):
-            cmdQueue = AsyncCmdQueue()
+        if(cmd_queue is None):
+            cmd_queue = AsyncCmdQueue()
 
-        self.baf = BufferedAudioStream(audioStream, cmdQueue, frameLength=world.bufLen)
+        self.baf = BufferedAudioStream(audio_stream, cmd_queue, frame_length=world.buf_len)
         self.rangeQueue = RangeQueue()  # rangeQueue of the last read segment
 
-        self.outBuffer = np.zeros((self.baf.nChannels, world.bufLen))
+        self.outBuffer = np.zeros((self.baf.nchannels, world.buf_len))
         self.w_out = []
-        for i in range(self.nChannels):
+        for i in range(self.nchannels):
             self.w_out.append(Wire(world, Wire.audioRate, Wire.wiretype_output))
 
-    def calcFunc(self):
+    def calc_func(self):
         self.rangeQueue.clear()
-        self.baf.read(self.outBuffer, outRangeQueue=self.rangeQueue)
-        for i in range(self.nChannels):
-            self.w_out[i].setBuffer(self.outBuffer[i])
+        self.baf.read(self.outBuffer, out_range_queue=self.rangeQueue)
+        for i in range(self.nchannels):
+            self.w_out[i].set_buffer(self.outBuffer[i])
 
-    def enableLoop(self, flag):
-        self.baf.enableLoop(flag)
+    def enable_loop(self, flag):
+        self.baf.enable_loop(flag)
 
-    def setLoop(self, loop_start, loop_end):
-        self.baf.setLoop(loop_start, loop_end)
+    def set_loop(self, loop_start, loop_end):
+        self.baf.set_loop(loop_start, loop_end)
 
     def seek(self, pos):
         self.baf.seek(pos)

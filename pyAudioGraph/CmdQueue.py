@@ -18,7 +18,7 @@ class AsyncCmdQueue:
     Asynchronous command queue
     """
     def __init__(self):
-        self.thread = threading.Thread(target=self.threadFunc)
+        self.thread = threading.Thread(target=self.thread_func)
         self.isRunning = False
         self.isFlushing = False
         self.cmdQueue = queue.Queue()
@@ -38,7 +38,7 @@ class AsyncCmdQueue:
             self.isRunning = True
             self.thread.start()
 
-    def threadFunc(self):
+    def thread_func(self):
         while(self.isRunning):
             with self.cv:
                 if(not self.isFlushing):
