@@ -1,3 +1,6 @@
+.. image:: https://img.shields.io/badge/license-GPLv2-blue.svg
+	:target: https://raw.githubusercontent.com/brunodigiorgi/pyAudioGraph/master/LICENSE
+
 Requirements
 ------------
 
@@ -7,12 +10,12 @@ Requirements
 Installation
 ------------
 
-Copy the directory on your python system path, then
-
-	import pyAudioGraph as ag
+	python3 setup.py install
 
 Usage
 -----
+	
+	import pyAudioGraph as ag
 
 	# 1. Create the units
 

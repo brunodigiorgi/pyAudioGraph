@@ -1,0 +1,10 @@
+language: python
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+# command to install dependencies
+install: 
+  - travis_retry python setup.py dev
+# command to run tests
+script: py.tests --runslow
