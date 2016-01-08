@@ -29,3 +29,4 @@ def test_RingBuffer_as_framer():
 	a_expected = np.array([[ 12., 13., 14., 15., 16., 17., 18., 19., 20., 21.],
 						   [ 42., 43., 44., 45., 46., 47., 48., 49., 50., 51.]])
 	assert(np.allclose(a, a_expected))
+

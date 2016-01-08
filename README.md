@@ -1,5 +1,4 @@
-.. image:: https://img.shields.io/badge/license-GPLv2-blue.svg
-    :target: https://raw.githubusercontent.com/brunodigiorgi/pyAudioGraph/master/LICENSE
+[![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://raw.githubusercontent.com/brunodigiorgi/pyAudioGraph/master/LICENSE)
 
 Requirements
 ------------
