@@ -7,4 +7,4 @@ python:
 install: 
   - travis_retry python setup.py develop easy_install pyAudioGraph[testing]
 # command to run tests
-script: py.test --runslow
+script: py.test
