@@ -47,11 +47,11 @@ Usage
 Conventions
 -----------
 
-* Sound buffers are numpy.ndarray with shape (nChannels, nSamples)
+* Sound buffers are numpy.ndarray with shape (channels, samples)
 * Units are connected using wires (audio-rate and control-rate)
-* Connections are estabilished between an output Wire and an input Wire with the method Wire.plugInto(Wire)
+* Connections are estabilished between an output Wire and an input Wire with the method Wire.plug_into(Wire)
 * Wires are prefixed with w_ for easy usage with code completion
-* Sometimes input control-rate wires change parameters of the units (for example: SinOsc.w_freq). The method setValue is threadsafe, so that you can for example change the frequency of the oscillator from the main/gui thread by calling SinOsc.w_freq.setValue()
+* Sometimes input control-rate wires change parameters of the units (for example: SinOsc.w_freq). The method set_value is threadsafe, so that you can for example change the frequency of the oscillator from the main/gui thread by calling SinOsc.w_freq.set_value()
 
 Other Units
 -----------
@@ -60,7 +60,7 @@ Other Units
 
 	samplerUnit = ag.SamplerUnit(world, 1)
 	sineBuffer = 0.2 * np.sin(np.arange(44100) * 400 / 44100 * 2 * np.pi).reshape(1,-1)
-	samplerUnit.addBuffer(sineBuffer)
+	samplerUnit.add_buffer(sineBuffer)
 
 #### Mixer
 
@@ -68,16 +68,16 @@ Other Units
 				  [0,1,0,1,1]]) 
 	mixer = ag.MixerUnit(world, M)
 
-	diskInUnit1.w_out[0].plugInto(mixer.w_in[0])
-	diskInUnit1.w_out[1].plugInto(mixer.w_in[1])
-	diskInUnit2.w_out[0].plugInto(mixer.w_in[2])
-	diskInUnit2.w_out[1].plugInto(mixer.w_in[3])
-	samplerUnit.w_out[0].plugInto(mixer.w_in[4])
+	diskInUnit1.w_out[0].plug_into(mixer.w_in[0])
+	diskInUnit1.w_out[1].plug_into(mixer.w_in[1])
+	diskInUnit2.w_out[0].plug_into(mixer.w_in[2])
+	diskInUnit2.w_out[1].plug_into(mixer.w_in[3])
+	samplerUnit.w_out[0].plug_into(mixer.w_in[4])
 
 #### Oscillator
 	
 	sinOsc = ag.SinOsc(world)
-	sinOsc.w_freq.setValue(400)
+	sinOsc.w_freq.set_value(400)
 
 #### InUnit (mic)
 
@@ -87,6 +87,6 @@ Other Units
 
 	rec_cr = ag.ControlRateRecorder(world, 1)
 	rec_ar = ag.AudioRateRecorder(world, 1)
-	inUnit.w_out[0].plugInto(rec_ar.w_in[0])
+	inUnit.w_out[0].plug_into(rec_ar.w_in[0])
 
 
