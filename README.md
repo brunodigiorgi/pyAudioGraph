@@ -1,5 +1,4 @@
 [![License](https://travis-ci.org/brunodigiorgi/pyAudioGraph.svg)](https://travis-ci.org/brunodigiorgi/pyAudioGraph)
-
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://raw.githubusercontent.com/brunodigiorgi/pyAudioGraph/master/LICENSE)
 
 Requirements
