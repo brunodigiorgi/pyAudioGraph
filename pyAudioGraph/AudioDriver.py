@@ -1,4 +1,9 @@
-import pyaudio
+try:
+    import pyaudio
+    pyaudio_available = True
+except ImportError:
+    pyaudio_available = False
+
 
 
 class AudioDriver:
@@ -8,8 +13,9 @@ class AudioDriver:
         self.bufLen = world.bufLen
         self.nChannels = world.nChannels
 
-        self._p = pyaudio.PyAudio()
-        self._stream = self._p.open(format=pyaudio.paFloat32,
+        if(pyaudio_available):
+            self._p = pyaudio.PyAudio()
+            self._stream = self._p.open(format=pyaudio.paFloat32,
                                     channels=world.nChannels,
                                     rate=world.sampleRate,
                                     frames_per_buffer=world.bufLen,
@@ -19,6 +25,7 @@ class AudioDriver:
                                     start=False)
 
     def start(self):
+        assert(pyaudio_available)
         self._stream.start_stream()
 
     def callback(self, in_data, frame_count, time_info, status):
@@ -27,8 +34,10 @@ class AudioDriver:
         return (out_data, pyaudio.paContinue)
 
     def stop(self):
+        assert(pyaudio_available)
         self._stream.stop_stream()
 
     def dispose(self):
-        self._stream.close()
-        self._p.terminate()
+        if(pyaudio_available):
+            self._stream.close()
+            self._p.terminate()
