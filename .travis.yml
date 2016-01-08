@@ -5,6 +5,6 @@ python:
   - "3.5"
 # command to install dependencies
 install: 
-  - travis_retry python setup.py develop pyAudioGraph[testing]
+  - travis_retry python setup.py develop easy_install pyAudioGraph[testing]
 # command to run tests
 script: py.tests --runslow
