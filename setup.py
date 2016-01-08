@@ -3,7 +3,6 @@ from setuptools import setup
 
 install_requires = [
     'numpy',
-    'pyAudio',
     ]
 
 tests_require = [
