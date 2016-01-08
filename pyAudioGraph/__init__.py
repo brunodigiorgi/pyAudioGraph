@@ -6,7 +6,6 @@ from .IOUnits import OutUnit, InUnit
 from .MixerUnit import MixerUnit
 from .SamplerUnit import SamplerUnit
 from .GenUnits import SinOsc
-from .PitchTracker import PitchTracker, YinPitchTracker
 from .Recorder import ControlRateRecorder, AudioRateRecorder
 from .DiskInUnit import DiskInUnit
 from .AudioStream import AudioStream_WaveFile
