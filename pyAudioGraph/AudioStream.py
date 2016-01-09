@@ -83,3 +83,6 @@ class AudioStreamWaveFile(AudioStream):
 
     def pos(self):
         return self._pos
+
+    def __del__(self):
+        self.wf.close()

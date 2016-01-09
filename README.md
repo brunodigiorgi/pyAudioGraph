@@ -10,6 +10,22 @@ Requirements
 Installation
 ------------
 
+Install portaudio (from repo)
+
+	mkdir portaudio_trunk
+	svn co https://subversion.assembla.com/svn/portaudio/portaudio/trunk/ portaudio_trunk --non-interactive --trust-server-cert
+	cd portaudio_trunk
+	
+	./configure
+	make 
+	make install
+
+Install pyAudio
+
+	pip3 install pyAudio
+	
+Install pyAudioGraph
+
 	python3 setup.py install
 
 Usage
