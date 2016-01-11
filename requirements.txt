@@ -1,5 +1,0 @@
-numpy
-pyAudio
-numpydoc
-pytest
-Sphinx
