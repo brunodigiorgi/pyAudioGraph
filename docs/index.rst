@@ -12,6 +12,8 @@ Contents:
    :maxdepth: 2
 
    modules/AudioBuffer
+   modules/AudioDriver
+   modules/AudioWorld
 
 
 Indices and tables

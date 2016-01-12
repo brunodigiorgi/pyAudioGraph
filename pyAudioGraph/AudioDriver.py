@@ -1,3 +1,5 @@
+"""Audio Driver module implements the audio callback using pyAudio (portaudio)."""
+
 try:
     import pyaudio
     pyaudio_available = True
@@ -6,6 +8,8 @@ except ImportError:
 
 
 class AudioDriver:
+    """Wraps the pyAudio functionality needed to manage the audio thread."""
+
     def __init__(self, world):
         self.world = world
         self.sample_rate = world.sample_rate
@@ -24,15 +28,39 @@ class AudioDriver:
                                         start=False)
 
     def start(self):
+        """Start the audio thread."""
         assert(pyaudio_available)
         self._stream.start_stream()
 
     def callback(self, in_data, frame_count, time_info, status):
+        """
+        Called within the audio thread.
+
+        Parameters
+        ----------
+        in_data : binary buffer interlaved
+            input samples from the audio input device
+        frame_count : int
+            number of frames
+        time_info : dictionary
+            contains keys input_buffer_adc_time, current_time, and output_buffer_dac_time
+        status : PaCallbackFlag
+            can be paInputUnderflow, paInputOverflow, paOutputUnderflow, paOutputOverflow, paPrimingOutput
+
+        Returns
+        -------
+        tuple
+            (out_data, flag)
+
+        out_data is an interlaved binary buffer (frame_count * channels * bytes-per-channel)
+        flag must be either paContinue, paComplete or paAbort
+        """
         assert(frame_count == self.buf_len)
         out_data = self.world.run(in_data)
         return (out_data, pyaudio.paContinue)
 
     def stop(self):
+        """Stop the audio thread."""
         assert(pyaudio_available)
         self._stream.stop_stream()
 

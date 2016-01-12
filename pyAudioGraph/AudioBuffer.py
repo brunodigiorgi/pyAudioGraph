@@ -2,7 +2,7 @@
 AudioBuffer module provides two class.
 
 * AudioBuffer: a simple wrapper of 2-dim numpy array with methods for writing, accumulating and reading.
-* RingBuffer: a circular buffer with independent writeIndex and readIndex
+* RingBuffer: a circular buffer with independent writeIndex and readIndex.
 """
 
 import numpy as np
