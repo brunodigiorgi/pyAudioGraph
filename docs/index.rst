@@ -13,7 +13,7 @@ Contents:
 
    modules/AudioBuffer
    modules/AudioDriver
-   modules/AudioWorld
+   modules/World
 
 
 Indices and tables
