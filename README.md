@@ -11,11 +11,17 @@ Requirements
 Installation
 ------------
 
-Install portaudio (from repo)
-
+Install portaudio on mac (tested on osx 10.11):
+	
 	mkdir portaudio_trunk
 	svn co https://subversion.assembla.com/svn/portaudio/portaudio/trunk/ portaudio_trunk --non-interactive --trust-server-cert
 	cd portaudio_trunk
+	
+	./configure
+	make 
+	make install
+
+Install portaudio on windows 7 (tested with mingw):
 	
 	./configure
 	make 
