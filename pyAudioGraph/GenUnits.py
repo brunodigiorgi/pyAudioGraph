@@ -22,3 +22,4 @@ class SinOsc(Node):
         p = ramp(self.phase, buf_len, f / sr * 2 * np.pi)
         self.w_out.set_buffer(np.sin(p))
         self.phase = p[-1] + f / sr * 2 * np.pi
+        self.phase = np.mod(self.phase, 2 * np.pi)
