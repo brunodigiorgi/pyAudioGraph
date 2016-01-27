@@ -7,7 +7,7 @@ class AudioStream:
     def __init__(self):
         # this props are set at construction time and do not change
         self.nchannels = 0
-        self.sampleRate = 0
+        self.sample_rate = 0
         self.length = 0
         pass
 
@@ -40,7 +40,7 @@ class AudioStreamWaveFile(AudioStream):
         self.wf = wave.open(filename, 'rb')  # returns a Wave_read object
         self.nchannels = self.wf.getnchannels()
         self.length = self.wf.getnframes()
-        self.sampleRate = self.wf.getframerate()
+        self.sample_rate = self.wf.getframerate()
         self.samplewidth = self.wf.getsampwidth()
         self.sampleType_numpy = self._get_sample_type(self.samplewidth)
         self.normCoeff = np.iinfo(self.sampleType_numpy).max

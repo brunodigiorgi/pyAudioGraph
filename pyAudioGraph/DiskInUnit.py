@@ -11,7 +11,7 @@ class DiskInUnit(Node):
         super().__init__(world)
         self.nchannels = audio_stream.nchannels
         self.length = audio_stream.length
-        self.sampleRate = audio_stream.sampleRate
+        self.sample_rate = audio_stream.sample_rate
 
         if(cmd_queue is None):
             cmd_queue = AsyncCmdQueue()
@@ -26,7 +26,8 @@ class DiskInUnit(Node):
 
     def calc_func(self):
         self.rangeQueue.clear()
-        self.baf.read(self.outBuffer, out_range_queue=self.rangeQueue)
+        async = not self.world.nrt
+        self.baf.read(self.outBuffer, out_range_queue=self.rangeQueue, async=async)
         for i in range(self.nchannels):
             self.w_out[i].set_buffer(self.outBuffer[i])
 
@@ -38,6 +39,9 @@ class DiskInUnit(Node):
 
     def seek(self, pos):
         self.baf.seek(pos)
+
+    def pos(self):
+        return self.baf.pos()
 
     def prime(self):
         # synchronously fill buffer. Do not call when audio thread is running

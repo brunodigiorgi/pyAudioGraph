@@ -10,7 +10,7 @@ class LoopableAudioStream(AudioStream):
         self.stream = stream
         self.nchannels = self.stream.nchannels
         self.length = self.stream.length
-        self.sampleRate = self.stream.sampleRate
+        self.sample_rate = self.stream.sample_rate
 
         self.loop_enabled = False
         self.loop_start = 0
@@ -127,6 +127,13 @@ class AudioFrameRingBuffer:
     def need_refill(self):
         return self._need_refill
 
+    def next_pos(self):
+        if(self.buf_available > 0):
+            return self.frameList[self.buf_tail].rangeQueue.back()
+        else:
+            return None
+
+
 
 class BufferedAudioStream(LoopableAudioStream):
     """
@@ -140,7 +147,7 @@ class BufferedAudioStream(LoopableAudioStream):
         self.stream = LoopableAudioStream(stream)
         self.nchannels = self.stream.nchannels
         self.length = self.stream.length
-        self.sampleRate = self.stream.sampleRate
+        self.sample_rate = self.stream.sample_rate
 
         self.loop_enabled = self.stream.loop_enabled
         self.loop_start = self.stream.loop_start
@@ -163,7 +170,7 @@ class BufferedAudioStream(LoopableAudioStream):
         self.loop_end = self.stream.loop_end
 
     # AudioStream
-    def read(self, out_buffer, start=0, length=None, out_range_queue=None):
+    def read(self, out_buffer, start=0, length=None, out_range_queue=None, async=True):
         assert(out_buffer.shape[0] == self.nchannels)
         if(length is None):
             length = out_buffer.shape[1]
@@ -171,10 +178,11 @@ class BufferedAudioStream(LoopableAudioStream):
 
         # ring buffer read
         self.ringBuffer.read(out_buffer, start=start, length=length, out_range_queue=out_range_queue)
+        self._pos = self.ringBuffer.next_pos()
 
         # async seek, if needed, and fill buffer
         if(self.ringBuffer.need_refill()):
-            self._seek_fill_buffer(True)
+            self._seek_fill_buffer(async)
 
         return length
 
@@ -183,7 +191,12 @@ class BufferedAudioStream(LoopableAudioStream):
         self.needSeekPos = pos
 
     def pos(self):
-        return self.stream.pos()
+        """The next sample position to be output"""
+        rb_next_pos = self.ringBuffer.next_pos()
+        if(rb_next_pos is not None):
+            return rb_next_pos
+        else:
+            return self.stream.pos()
 
     # BufferedAudioStream
     def prime(self):

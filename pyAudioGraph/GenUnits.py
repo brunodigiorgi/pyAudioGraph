@@ -17,7 +17,7 @@ class SinOsc(Node):
 
     def calc_func(self):
         buf_len = self.world.buf_len
-        sr = self.world.sampleRate
+        sr = self.world.sample_rate
         f = self.w_freq._value
         p = ramp(self.phase, buf_len, f / sr * 2 * np.pi)
         self.w_out.set_buffer(np.sin(p))

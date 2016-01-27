@@ -27,9 +27,8 @@ class World:
         self._isRunning = False
 
         self._allocate_buffers()
-
-        self.t = 0
-        self.fr = 400
+        
+        self.nrt = False
 
     def _allocate_buffers(self):
         self.inBuffer = np.zeros((self.nchannels, self.buf_len), dtype=np.float32)
@@ -79,6 +78,20 @@ class World:
         if(self._isRunning):
             self._audioDriver.stop()
             self._isRunning = False
+
+    def run_nrt(self, stop_condition):
+        """
+        Run in non-real-time mode.
+
+        Parameters
+        ----------
+        stop_condition : callable
+            called at every cycle. Return if True
+        """
+        self.nrt = True
+        while(not stop_condition()):
+            self._topGroup.calc_func()
+        self.nrt = False
 
     def dispose(self):
         """Clean up."""
