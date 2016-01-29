@@ -300,3 +300,80 @@ class RingBuffer:
 
     def length(self):
         return self._length
+
+
+class SortedBuffer:
+    """ Simple numpy based 1-dim sorted buffer """
+    def __init__(self, size):
+        self.sbuf = np.zeros(size)  # sorted buffer
+        self.buf = np.zeros(size)   # ring buffer
+        self.buf_ind = int(0)
+        self.size = size
+        
+    def push(self, v):
+        """  
+        Parameters
+        ----------
+        v : float
+            new element to insert in the buffer, maintaining sorted state
+        """
+        # retrieve oldest element from the ring buffer
+        old = self.buf[self.buf_ind]
+        self._pop(old)
+
+        #self.buf is sorted and contains self.size - 1 values
+        i = np.searchsorted(self.sbuf[:-1], v, side='left')
+        self.sbuf[i+1:] = self.sbuf[i:-1]
+        self.sbuf[i] = v
+
+        # store the new element in the ring buffer
+        self.buf[self.buf_ind] = v
+        self.buf_ind = (self.buf_ind + 1) % self.size        
+    
+    def _pop(self, v):
+        """
+        Parameters
+        ----------
+        v : float
+            an element contained in the buffer
+        """
+        # assume self.buf contains v and is sorted
+        i = np.searchsorted(self.sbuf, v, side='left')
+        self.sbuf[i:-1] = self.sbuf[i+1:]
+        # self.buf is sorted and contains self.size - 1 values   
+    
+    def __str__(self):
+        return str(self.sbuf)
+    
+    def __getitem__(self, k):
+        return self.sbuf[k]
+
+    def clear(self):
+        self.sbuf[:] = 0
+        self.buf[:] = 0
+        self.buf_ind = 0
+
+class MovingQuantile:
+    def __init__(self, size, p):
+        
+        self.sortBuffer = SortedBuffer(size)
+        self.index = np.floor(size * p / float(100))
+        self.index = np.minimum(np.maximum(self.index, 0), size-1)
+    
+    def push(self, v):
+        """
+        Push v in the buffer
+        """
+        self.sortBuffer.push(v)
+    
+    def __str__(self):
+        return str(self.sortBuffer)
+    
+    def pop(self):
+        """
+        Pop the p-quantile element from the sorted buffer
+        """
+        return self.sortBuffer[self.index]
+
+    def clear(self):
+        self.sortBuffer.clear()
