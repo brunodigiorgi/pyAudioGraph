@@ -1,4 +1,4 @@
-from .AudioBuffer import AudioBuffer, RingBuffer, SortedBuffer, MovingQuantile
+from .AudioBuffer import AudioBuffer, RingBuffer, SortedBuffer, MovingPercentile
 from .AudioGraph import Node, Group
 from .Wire import Wire
 from .World import World
