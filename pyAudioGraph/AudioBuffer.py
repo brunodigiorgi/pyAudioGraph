@@ -353,7 +353,7 @@ class SortedBuffer:
         self.buf[:] = 0
         self.buf_ind = 0
 
-class MovingQuantile:
+class MovingPercentile:
     def __init__(self, size, p):
         
         self.sortBuffer = SortedBuffer(size)
@@ -371,7 +371,7 @@ class MovingQuantile:
     
     def pop(self):
         """
-        Pop the p-quantile element from the sorted buffer
+        Pop the qth-percentile element from the sorted buffer
         """
         return self.sortBuffer[self.index]
 
