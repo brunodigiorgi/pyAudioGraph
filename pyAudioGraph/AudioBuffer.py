@@ -309,9 +309,9 @@ class SortedBuffer:
         self.buf = np.zeros(size)   # ring buffer
         self.buf_ind = int(0)
         self.size = size
-        
+
     def push(self, v):
-        """  
+        """
         Parameters
         ----------
         v : float
@@ -328,8 +328,8 @@ class SortedBuffer:
 
         # store the new element in the ring buffer
         self.buf[self.buf_ind] = v
-        self.buf_ind = (self.buf_ind + 1) % self.size        
-    
+        self.buf_ind = (self.buf_ind + 1) % self.size
+
     def _pop(self, v):
         """
         Parameters
@@ -340,11 +340,11 @@ class SortedBuffer:
         # assume self.buf contains v and is sorted
         i = np.searchsorted(self.sbuf, v, side='left')
         self.sbuf[i:-1] = self.sbuf[i+1:]
-        # self.buf is sorted and contains self.size - 1 values   
-    
+        # self.buf is sorted and contains self.size - 1 values
+
     def __str__(self):
         return str(self.sbuf)
-    
+
     def __getitem__(self, k):
         return self.sbuf[k]
 
@@ -353,22 +353,23 @@ class SortedBuffer:
         self.buf[:] = 0
         self.buf_ind = 0
 
+
 class MovingPercentile:
     def __init__(self, size, p):
-        
+
         self.sortBuffer = SortedBuffer(size)
         self.index = np.floor(size * p / float(100))
-        self.index = np.minimum(np.maximum(self.index, 0), size-1)
-    
+        self.index = np.minimum(np.maximum(self.index, 0), size - 1)
+
     def push(self, v):
         """
         Push v in the buffer
         """
         self.sortBuffer.push(v)
-    
+
     def __str__(self):
         return str(self.sortBuffer)
-    
+
     def pop(self):
         """
         Pop the qth-percentile element from the sorted buffer

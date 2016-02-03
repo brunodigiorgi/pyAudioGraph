@@ -26,12 +26,18 @@ class ControlRateRecorder(Node):
             self.extend()
 
     def extend(self):
+        new_size = self.size * 2
         for i in range(self.nchannels):
-            self.data[i] = np.append(self.data[i], np.zeros(self.size, dtype=np.float32))
-        self.size *= 2
+            self.data[i].resize(new_size)
+        self.size = new_size
 
     def clear(self):
         self.count = 0
+
+    def get_data(self, k):
+        if(k > self.nchannels):
+            raise IndexError('Index out of bounds')
+        return self.data[k][:self.count]
 
 
 class AudioRateRecorder(Node):
@@ -59,9 +65,15 @@ class AudioRateRecorder(Node):
             self.extend()
 
     def extend(self):
+        new_size = self.size * 2
         for i in range(self.nchannels):
-            self.data[i] = np.append(self.data[i], np.zeros(self.size, dtype=np.float32))
-        self.size *= 2
+            self.data[i].resize(new_size)
+        self.size = new_size
 
     def clear(self):
         self.count = 0
+
+    def get_data(self, k):
+        if(k > self.nchannels):
+            raise IndexError('Index out of bounds')
+        return self.data[k][:self.count * self.world.buf_len]

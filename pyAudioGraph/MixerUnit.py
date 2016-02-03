@@ -30,3 +30,14 @@ class MixerUnit(Node):
             self.w_out[o]._buf[0, :] = 0
         for i, o in itertools.product(range(ni), range(no)):
             self.w_out[o]._buf[0, :] += self.w_level[o][i]._value * self.w_in[i]._buf[0, :]
+
+
+class MonizerUnit(MixerUnit):
+    """Mixer nchannels to mono."""
+
+    def __init__(self, world, diskinUnit):
+        nchannels = diskinUnit.nchannels
+        matrix = np.ones((1, nchannels)) / nchannels
+        super().__init__(world, matrix)
+        for i in range(nchannels):
+            diskinUnit.w_out[i].plug_into(self.w_in[i])
