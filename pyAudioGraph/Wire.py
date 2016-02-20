@@ -36,35 +36,48 @@ class Wire:
     wiretype_input = 2
     wiretype_output = 2
 
-    def __init__(self, world, rate, wiretype):
+    def __init__(self, parent, rate, wiretype, buf_len):
+        """
+        Parameters
+        ----------
+        parent : Node
+            the parent node
+        """
+        self.parent = parent
         self.wiretype = wiretype
         self.rate = rate
+        self.buf_len = buf_len
+
+        self.connections = []
+
         assert(self.rate in [Wire.controlRate, Wire.audioRate])
 
         # output wires allocate memory
         if(self.wiretype == Wire.wiretype_output):
             if(self.rate == Wire.audioRate):
-                self._buf = np.zeros((1, world.buf_len), dtype=np.float32)
+                self._buf = np.zeros((1, self.buf_len), dtype=np.float32)
             elif(self.rate == Wire.controlRate):
                 self._value = np.array([0], dtype=np.float32)
 
     def set_buffer(self, in_buffer):
         """
-        in_buffer: numpy ndarray 1-dim, length=world.buf_len
+        in_buffer: numpy ndarray 1-dim, length=self.buf_len
         """
         self._buf[0, :] = in_buffer[:]
 
     def set_value(self, in_value):
         """
-        in_value: scalar
+        in_obj: any python object. We store a reference to that object, so don't change it
         """
-        self._value[0] = in_value
+        self._value[:] = in_value
 
     def plug_into(self, wire):
         assert((wire is not None) and
                ((self.wiretype == Wire.wiretype_output) and
                 (wire.wiretype == Wire.wiretype_input)) and
-               (self.rate == wire.rate))
+                (self.rate == wire.rate))
+
+        self.connections.append(wire)   # to traverse the graph
 
         if(self.rate == Wire.audioRate):
             wire._buf = self._buf

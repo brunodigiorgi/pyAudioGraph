@@ -1,6 +1,6 @@
 import numpy as np
-from .Wire import Wire
-from .AudioGraph import Node
+from ..Wire import Wire
+from ..AudioGraph import Node
 
 
 class ControlRateRecorder(Node):
@@ -14,8 +14,10 @@ class ControlRateRecorder(Node):
         self.size = self.init_size
         self.count = 0
         for i in range(self.nchannels):
-            self.w_in.append(Wire(world, Wire.controlRate, Wire.wiretype_input))
+            self.w_in.append(Wire(self, Wire.controlRate, Wire.wiretype_input, world.buf_len))
             self.data.append(np.zeros(self.size, dtype=np.float32))
+
+        self.in_wires.extend(self.w_in)
 
     def calc_func(self):
         for i in range(self.nchannels):
@@ -51,8 +53,10 @@ class AudioRateRecorder(Node):
         self.size = self.init_size
         self.count = 0
         for i in range(self.nchannels):
-            self.w_in.append(Wire(world, Wire.audioRate, Wire.wiretype_input))
+            self.w_in.append(Wire(self, Wire.audioRate, Wire.wiretype_input, world.buf_len))
             self.data.append(np.zeros(self.size, dtype=np.float32))
+
+        self.in_wires.extend(self.w_in)
 
     def calc_func(self):
         b = self.world.buf_len

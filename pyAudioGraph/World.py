@@ -27,7 +27,7 @@ class World:
         self._isRunning = False
 
         self._allocate_buffers()
-        
+
         self.nrt = False
 
     def _allocate_buffers(self):
@@ -55,6 +55,17 @@ class World:
             last node to be called in the audio graph traversal sequence
         """
         self._topGroup.add_tail(node)
+
+    def append(self, node):
+        """
+        Append the node to the node list of the top group.
+
+        Call sort(), when all the nodes have been added in the list
+        """
+        self.add_tail(node)
+
+    def sort(self):
+        self._topGroup.sort()
 
     def start(self):
         """Start the audio thread if not already running."""
@@ -89,9 +100,14 @@ class World:
             called at every cycle. Return if True
         """
         self.nrt = True
+        self._isRunning = True
         while(not stop_condition()):
             self._topGroup.calc_func()
+        self._isRunning = False
         self.nrt = False
+
+    def is_running(self):
+        return self._isRunning
 
     def dispose(self):
         """Clean up."""

@@ -1,6 +1,6 @@
-from .AudioBuffer import RingBuffer
-from .AudioGraph import Node
-from .Wire import Wire
+from ..AudioBuffer import RingBuffer
+from ..AudioGraph import Node
+from ..Wire import Wire
 import numpy as np
 
 
@@ -11,9 +11,12 @@ class SamplerUnit(Node):
         self.nchannels = no = nchannels
         self.buffers = []
         self.ringBuffer = RingBuffer(self.nchannels, world.buf_len)
-        self.w_out = [Wire(world, Wire.audioRate, Wire.wiretype_output) for o in range(no)]
-        self.temp_out = np.zeros((no, world.buf_len), dtype=np.float32)
+        self.w_out = [Wire(self, Wire.audioRate, Wire.wiretype_output, world.buf_len) for o in range(no)]
+        
+        # add w_in_trigger (substitutes the method set_trigger)
+        self.out_wires.extend(self.w_out)
 
+        self.temp_out = np.zeros((no, world.buf_len), dtype=np.float32)
         self.trigger_list = []
 
     def add_buffer(self, buf):

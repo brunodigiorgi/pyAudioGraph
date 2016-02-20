@@ -1,14 +1,17 @@
 import numpy as np
-from .AudioGraph import Node
-from .Wire import Wire
+from ..AudioGraph import Node
+from ..Wire import Wire
 
 
 class RmsUnit(Node):
     """Compute the Root Mean Square value of the current buffer"""
     def __init__(self, world):
         super().__init__(world)
-        self.w_in = Wire(world, Wire.audioRate, Wire.wiretype_input)
-        self.w_out = Wire(world, Wire.controlRate, Wire.wiretype_output)
+        self.w_in = Wire(self, Wire.audioRate, Wire.wiretype_input, world.buf_len)
+        self.w_out = Wire(self, Wire.controlRate, Wire.wiretype_output, world.buf_len)
+
+        self.in_wires.append(self.w_in)
+        self.out_wires.append(self.w_out)
 
     def calc_func(self):
         buf_len = self.world.buf_len

@@ -27,7 +27,7 @@ class AsyncCmdQueue:
 
     def push(self, cmd):
         """
-        cmd: a callable (function or class with __call__ method)
+        cmd: callable
         """
         with self.cv:
             self.cmdQueue.put(cmd, block=False)

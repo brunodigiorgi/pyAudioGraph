@@ -1,12 +1,17 @@
 import numpy as np
-from .BufferedAudioStream import BufferedAudioStream
-from .AudioGraph import Node
-from .Wire import Wire
-from .Range import RangeQueue
-from .CmdQueue import AsyncCmdQueue
+from ..BufferedAudioStream import BufferedAudioStream
+from ..AudioGraph import Node
+from ..Wire import Wire
+from ..Range import RangeQueue
+from ..CmdQueue import AsyncCmdQueue
 
 
 class DiskInUnit(Node):
+    """
+    out_wires:
+        - w_out : list, audioRate
+    """
+
     def __init__(self, world, audio_stream, cmd_queue=None):
         super().__init__(world)
         self.nchannels = audio_stream.nchannels
@@ -22,7 +27,9 @@ class DiskInUnit(Node):
         self.outBuffer = np.zeros((self.baf.nchannels, world.buf_len))
         self.w_out = []
         for i in range(self.nchannels):
-            self.w_out.append(Wire(world, Wire.audioRate, Wire.wiretype_output))
+            self.w_out.append(Wire(self, Wire.audioRate, Wire.wiretype_output, world.buf_len))
+
+        self.out_wires.extend(self.w_out)
 
     def calc_func(self):
         self.rangeQueue.clear()
