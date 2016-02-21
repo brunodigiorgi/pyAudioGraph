@@ -3,7 +3,7 @@ from ..AudioGraph import Node
 from ..Wire import Wire
 
 
-class RmsUnit(Node):
+class RmsNode(Node):
     """Compute the Root Mean Square value of the current buffer"""
     def __init__(self, world):
         super().__init__(world)

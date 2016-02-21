@@ -1,9 +1,8 @@
-from .IOUnits import OutUnit, InUnit
-from .MixerUnit import MixerUnit, MonizerUnit
-from .SamplerUnit import SamplerUnit
-from .GenUnits import SinOsc, LevelSlopeGen
-from .OpUnit import OpMult
-from .TimeDomainFeatures import RmsUnit
+from .IONodes import OutNode, InNode
+from .MixerNode import MixerNode, MonizerNode
+from .SamplerNode import SamplerNode
+from .GenNodes import SinOsc, LevelSlopeGen
+from .OpNode import OpMult
+from .TimeDomainFeatures import RmsNode
 from .Recorder import ControlRateRecorder, AudioRateRecorder
-from .DiskInUnit import DiskInUnit
-
+from .DiskInNode import DiskInNode
