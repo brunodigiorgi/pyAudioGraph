@@ -13,41 +13,20 @@ class Node:
     def calc_func(self):
         pass
 
-    def add_after(self, node):
-        assert(node.parent is not None)
-        node.parent.insert_after(self, node)
-
-    def add_before(self, node):
-        assert(node.parent is not None)
-        node.parent.insert_before(self, node)
-
 
 class Group(Node):
     def __init__(self, world):
         super().__init__(world)
         self.nodesList = []
+        self.is_sorted = True
 
-    def add_head(self, node):
-        node.parent = self
-        self.nodesList.insert(0, node)
+    def append(self, node):
+        if(node in self.nodesList):
+            print("Trying to append a node that is already in the group, doing nothing")
+            return
 
-    def add_tail(self, node):
-        node.parent = self
         self.nodesList.append(node)
-
-    def insert_after(self, node1, node2):
-        """ insert node1 after node2 """
-        assert(node2.parent == self)
-        i = self.nodesList.index(node2)
-        node1.parent = self
-        self.nodesList.insert(i + 1, node1)
-
-    def insert_before(self, node1, node2):
-        """ insert node1 before node2 """
-        assert(node2.parent == self)
-        i = self.nodesList.index(node2)
-        node1.parent = self
-        self.nodesList.insert(i, node1)
+        self.is_sorted = False
 
     def calc_func(self):
         for n in self.nodesList:
@@ -55,6 +34,7 @@ class Group(Node):
 
     def clear(self):
         self.nodesList = []
+        self.is_sorted = True
 
     def _topological_sort_util(self, v, connections, visited, stack):
         visited[v] = True
@@ -86,10 +66,12 @@ class Group(Node):
         connections = np.zeros((nnodes, nnodes), dtype=int)
         for i1 in range(nnodes):
             for ow in nl[i1].out_wires:
-                for c in ow.connections:
-                    assert(c.parent in nl)
-                    i2 = nl.index(c.parent)
+                for iw in ow.in_wires:
+                    assert(iw.parent in nl)
+                    i2 = nl.index(iw.parent)
                     connections[i1, i2] = 1
 
         sorted_list = self._topological_sort(connections)
         self.nodesList = [self.nodesList[i] for i in sorted_list]
+
+        self.is_sorted = True

@@ -1,6 +1,6 @@
 import numpy as np
 from ..AudioGraph import Node
-from ..Wire import Wire
+from ..Wire import InWire, AudioOutWire
 
 
 def ramp(start, length, slope):
@@ -21,9 +21,8 @@ class LevelSlopeGen(Node):
         self.value = initial_value
         self.v_temp = initial_value
         self.speed = speed
-        self.w_in = Wire(self, Wire.controlRate, Wire.wiretype_input, world.buf_len)
-        self.w_in.set_value(initial_value)
-        self.w_out = Wire(self, Wire.audioRate, Wire.wiretype_output, world.buf_len)
+        self.w_in = InWire(self, initial_value)
+        self.w_out = AudioOutWire(self, world.buf_len)
 
         self.in_wires.append(self.w_in)
         self.out_wires.append(self.w_out)
@@ -36,7 +35,7 @@ class LevelSlopeGen(Node):
             self.value = value
 
     def calc_func(self):
-        self._set_value(self.w_in._value)
+        self._set_value(self.w_in.get_value())
         buf_len = self.world.buf_len
         dest = self.v_temp + self.speed * (self.value - self.v_temp)
         slope = (dest - self.v_temp) / buf_len
@@ -47,13 +46,10 @@ class LevelSlopeGen(Node):
 class SinOsc(Node):
     def __init__(self, world):
         super().__init__(world)
-        self.level_node = LevelSlopeGen(world, initial_value=1)
 
-        self.w_level = Wire(self, Wire.controlRate, Wire.wiretype_input, world.buf_len)
-        self.w_freq = Wire(self, Wire.controlRate, Wire.wiretype_input, world.buf_len)
-        self.w_out = Wire(self, Wire.audioRate, Wire.wiretype_output, world.buf_len)
+        self.w_freq = InWire(self, 400)
+        self.w_out = AudioOutWire(self, world.buf_len)
         self.phase = 0
-        self.w_freq.set_value(400)
 
         self.in_wires.extend([self.w_freq, self.w_level])
         self.out_wires.append(self.w_out)
@@ -61,12 +57,9 @@ class SinOsc(Node):
     def calc_func(self):
         buf_len = self.world.buf_len
         sr = self.world.sample_rate
-        f = self.w_freq._value
-
-        self.level_node.w_in.set_value(self.w_level._value)
-        self.level_node.calc_func()
+        f = self.w_freq.get_data()
 
         p = ramp(self.phase, buf_len, f / sr * 2 * np.pi)
-        self.w_out.set_buffer(np.sin(p) * self.level_node.w_out._buf)
+        self.w_out.set_buffer(np.sin(p))
         self.phase = p[-1] + f / sr * 2 * np.pi
         self.phase = np.mod(self.phase, 2 * np.pi)

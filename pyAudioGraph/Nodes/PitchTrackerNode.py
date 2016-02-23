@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Pitch Tracker Node class (PitchTrackerNode) and Pitch Tracker Algorithm (PitchTrackerBase) interface."""
 
-from ..Wire import Wire
+from ..Wire import InWire, OutWire
 from ..AudioGraph import Node
 
 
@@ -61,9 +61,9 @@ class PitchTrackerNode(Node):
         super().__init__(world)
 
         self.pitch_tracker = pitch_tracker
-        self.w_in = Wire(self, Wire.audioRate, Wire.wiretype_input, world.buf_len)
-        self.w_f0 = Wire(self, Wire.controlRate, Wire.wiretype_output, world.buf_len)
-        self.w_voiced = Wire(world, Wire.controlRate, Wire.wiretype_output, world.buf_len)
+        self.w_in = InWire(self)
+        self.w_f0 = OutWire(self)
+        self.w_voiced = OutWire(self)
 
         self.in_wires.append(self.w_in)
         self.out_wires.extend([self.w_f0, self.w_voiced])
@@ -72,9 +72,10 @@ class PitchTrackerNode(Node):
         self.pitch_tracker.clear()
 
     def calc_func(self):
-        f0, voiced = self.pitch_tracker.process(self.w_in._buf)
-        self.w_f0.set_value(f0)
-        self.w_voiced.set_value(voiced)
+        in_array = self.w_in.get_data()
+        f0, voiced = self.pitch_tracker.process(in_array)
+        self.w_f0.set_data(f0)
+        self.w_voiced.set_data(voiced)
 
     def latency(self):
         return self.pitch_tracker.latency()

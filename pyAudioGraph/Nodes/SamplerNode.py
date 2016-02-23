@@ -1,22 +1,36 @@
 from ..AudioBuffer import RingBuffer
 from ..AudioGraph import Node
-from ..Wire import Wire
+from ..Wire import AudioOutWire, InWire
 import numpy as np
 
 
 class SamplerNode(Node):
+    """
+
+    Wires
+    -----
+    out_wires:
+        w_out : AudioOutWire
+    in_wires:
+        w_trigger_list : trigger_list = [(t_id, t_pos, t_scale), ...]
+            t_id is the buffer id (int)
+            t_pos is the sample offset (int)
+            t_scale is a level coeff for accumulation (float)
+
+    """
     def __init__(self, world, nchannels):
         super().__init__(world)
 
-        self.nchannels = no = nchannels
+        self.nchannels = nout = nchannels
         self.buffers = []
         self.ringBuffer = RingBuffer(self.nchannels, world.buf_len)
-        self.w_out = [Wire(self, Wire.audioRate, Wire.wiretype_output, world.buf_len) for o in range(no)]
-        
+        self.w_out = [AudioOutWire(self, world.buf_len) for o in range(nout)]
+        self.w_trigger_list = InWire(self)
+
         # add w_in_trigger (substitutes the method set_trigger)
         self.out_wires.extend(self.w_out)
 
-        self.temp_out = np.zeros((no, world.buf_len), dtype=np.float32)
+        self.temp_out = np.zeros((nout, world.buf_len), dtype=np.float32)
         self.trigger_list = []
 
     def add_buffer(self, buf):
@@ -30,15 +44,6 @@ class SamplerNode(Node):
     def reset(self):
         self.ringBuffer.clear()
 
-    def set_trigger(self, trigger_list):
-        """
-        trigger_list = [(t_id, t_pos, t_scale), ...]
-          t_id is the buffer id (int)
-          t_pos is the sample offset (int)
-          t_scale is a level coeff for accumulation (float)
-        """
-        self.trigger_list = trigger_list
-
     def calc_func(self):
 
         nb = len(self.buffers)
@@ -47,14 +52,14 @@ class SamplerNode(Node):
         # pre-conditions
         if(nb == 0):
             for o in range(no):
-                self.w_out[o]._buf[:] = 0
+                self.w_out[o].buf[:] = 0
             return
 
-        for t_id, t_pos, t_sc in self.trigger_list:
+        trigger_list = self.w_trigger_list.get_data()
+        for t_id, t_pos, t_sc in trigger_list:
             if(t_id < nb):
                 self.ringBuffer.accumulate(self.buffers[t_id], offset=t_pos, in_scale=t_sc)
 
-        self.trigger_list = []
         self.ringBuffer.advance_write_index(self.world.buf_len)
         self.ringBuffer.read(self.temp_out)
         self.ringBuffer.advance_read_index(self.world.buf_len)

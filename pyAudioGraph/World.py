@@ -34,35 +34,13 @@ class World:
         self.inBuffer = np.zeros((self.nchannels, self.buf_len), dtype=np.float32)
         self.outBuffer = np.zeros((self.nchannels, self.buf_len), dtype=np.float32)
 
-    def add_head(self, node):
-        """
-        Set the first node in the graph traversal sequence.
-
-        Parameters
-        ----------
-        node : Node
-            first node to be called in the audio graph traversal sequence
-        """
-        self._topGroup.add_head(node)
-
-    def add_tail(self, node):
-        """
-        Set the last node in the graph traversal sequence.
-
-        Parameters
-        ----------
-        node : Node
-            last node to be called in the audio graph traversal sequence
-        """
-        self._topGroup.add_tail(node)
-
     def append(self, node):
         """
         Append the node to the node list of the top group.
 
         Call sort(), when all the nodes have been added in the list
         """
-        self.add_tail(node)
+        self._topGroup.append(node)
 
     def sort(self):
         self._topGroup.sort()
