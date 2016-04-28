@@ -321,9 +321,9 @@ class SortedBuffer:
         old = self.buf[self.buf_ind]
         self._pop(old)
 
-        #self.buf is sorted and contains self.size - 1 values
+        # self.buf is sorted and contains self.size - 1 values
         i = np.searchsorted(self.sbuf[:-1], v, side='left')
-        self.sbuf[i+1:] = self.sbuf[i:-1]
+        self.sbuf[i + 1:] = self.sbuf[i:-1]
         self.sbuf[i] = v
 
         # store the new element in the ring buffer

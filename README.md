@@ -1,4 +1,4 @@
-[![Docs](https://readthedocs.org/projects/pyaudiograph/badge/?version=latest)](https://pyaudiograph.readthedocs.org/en/latest/?badge=latest)
+[![Docs](https://readthedocs.org/projects/pyaudiograph/badge/?version=latest)](https://pyaudiograph.readthedocs.io/en/latest/?badge=latest)
 [![Build](https://travis-ci.org/brunodigiorgi/pyAudioGraph.svg)](https://travis-ci.org/brunodigiorgi/pyAudioGraph)
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://raw.githubusercontent.com/brunodigiorgi/pyAudioGraph/master/LICENSE)
 
