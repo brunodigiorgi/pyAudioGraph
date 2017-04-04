@@ -34,7 +34,7 @@ Install pyAudio
 
 Depending on where you installed portaudio you may need to add its path:
 
-	sudo -H pip3 install --global-option=build_ext --global-option="-I/usr/local/include" pyAudio
+	pip3 install --global-option=build_ext --global-option="-I/usr/local/include" pyAudio
 
 Install pyAudioGraph
 
