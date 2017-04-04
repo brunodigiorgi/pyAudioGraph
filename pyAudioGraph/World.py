@@ -37,10 +37,15 @@ class World:
     def append(self, node):
         """
         Append the node to the node list of the top group.
+        node may be a Node or a list of Nodes
 
-        Call sort(), when all the nodes have been added in the list
+        Call sort(), after all the nodes have been added in the list
         """
-        self._topGroup.append(node)
+        try:
+            for n in node:
+                self._topGroup.append(n)
+        except TypeError:
+            self._topGroup.append(node)
 
     def sort(self):
         self._topGroup.sort()

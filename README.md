@@ -31,6 +31,11 @@ Install pyAudio
 
 	pip3 install pyAudio
 	
+
+Depending on where you installed portaudio you may need to add its path:
+
+	sudo -H pip3 install --global-option=build_ext --global-option="-I/usr/local/include" pyAudio
+
 Install pyAudioGraph
 
 	python3 setup.py install
@@ -49,8 +54,27 @@ Conventions
 * Wires are prefixed with w_ for easy usage with code completion
 * Sometimes input control-rate wires change parameters of the units (for example: SinOsc.w_freq). The method set_value is threadsafe, so that you can for example change the frequency of the oscillator from the main/gui thread by calling SinOsc.w_freq.set_value()
 
+General Usage
+-------------
+
+	import pyAudioGraph as ag
+
+Create units... (see below). 
+Then add units and compile the graph
+
+	world.append(units)
+	world.sort()
+
+Run the audio graph
+
+	import time
+	world.start()
+	time.sleep(20)
+	world.stop()
+
 Other Units
 -----------
+
 
 #### Sampler
 
