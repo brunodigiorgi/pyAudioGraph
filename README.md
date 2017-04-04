@@ -75,14 +75,13 @@ Run the audio graph
 Other Units
 -----------
 
-
-#### Sampler
+Sampler
 
 	samplerUnit = ag.SamplerUnit(world, 1)
 	sineBuffer = 0.2 * np.sin(np.arange(44100) * 400 / 44100 * 2 * np.pi).reshape(1,-1)
 	samplerUnit.add_buffer(sineBuffer)
 
-#### Mixer
+Mixer
 
 	M = np.array([[1,0,1,0,1],
 				  [0,1,0,1,1]]) 
@@ -94,16 +93,16 @@ Other Units
 	diskInUnit2.w_out[1].plug_into(mixer.w_in[3])
 	samplerUnit.w_out[0].plug_into(mixer.w_in[4])
 
-#### Oscillator
+Oscillator
 	
 	sinOsc = ag.SinOsc(world)
 	sinOsc.w_freq.set_value(400)
 
-#### InUnit (mic)
+InUnit (mic)
 
 	inUnit = ag.InUnit(world)
 
-#### Recorder
+Recorder
 
 	rec_cr = ag.ControlRateRecorder(world, 1)
 	rec_ar = ag.AudioRateRecorder(world, 1)
