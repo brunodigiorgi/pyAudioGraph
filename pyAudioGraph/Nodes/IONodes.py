@@ -50,6 +50,6 @@ class InNode(Node):
         self.out_wires.extend(self.w_out)
 
     def calc_func(self):
-        level = self.w_level.get_value()
+        level = self.w_level.get_data()
         for i in range(self.nchannels):
             self.w_out[i].set_buffer(self.world.inBuffer[i, :] * level)

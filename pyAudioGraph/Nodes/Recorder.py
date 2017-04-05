@@ -4,6 +4,7 @@ from ..AudioGraph import Node
 
 
 class ControlRateRecorder(Node):
+
     def __init__(self, world, nchannels, init_size=8192):
         super().__init__(world)
         self.nchannels = nchannels
@@ -44,6 +45,7 @@ class ControlRateRecorder(Node):
 
 
 class AudioRateRecorder(Node):
+
     def __init__(self, world, nchannels, init_size=131072):
         super().__init__(world)
         self.nchannels = nchannels

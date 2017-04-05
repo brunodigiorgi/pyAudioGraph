@@ -42,11 +42,7 @@ class PitchTrackerBase:
 
 class PitchTrackerNode(Node):
     """
-    Abstract base class. Use one of its subclass.
-
-    To subclass override methods:
-    - pitch_track()
-    - latency()
+    Node wrapper of the pitch tracker algorithm
     """
 
     def __init__(self, world, pitch_tracker):

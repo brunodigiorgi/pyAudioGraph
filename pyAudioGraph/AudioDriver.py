@@ -1,10 +1,6 @@
 """Audio Driver module implements the audio callback using pyAudio (portaudio)."""
 
-try:
-    import pyaudio
-    pyaudio_available = True
-except ImportError:
-    pyaudio_available = False
+import pyaudio
 
 
 class AudioDriver:
@@ -16,20 +12,18 @@ class AudioDriver:
         self.buf_len = world.buf_len
         self.nchannels = world.nchannels
 
-        if(pyaudio_available):
-            self._p = pyaudio.PyAudio()
-            self._stream = self._p.open(format=pyaudio.paFloat32,
-                                        channels=world.nchannels,
-                                        rate=world.sample_rate,
-                                        frames_per_buffer=world.buf_len,
-                                        input=True,
-                                        output=True,
-                                        stream_callback=self.callback,
-                                        start=False)
+        self._p = pyaudio.PyAudio()
+        self._stream = self._p.open(format=pyaudio.paFloat32,
+                                    channels=world.nchannels,
+                                    rate=world.sample_rate,
+                                    frames_per_buffer=world.buf_len,
+                                    input=True,
+                                    output=True,
+                                    stream_callback=self.callback,
+                                    start=False)
 
     def start(self):
         """Start the audio thread."""
-        assert(pyaudio_available)
         self._stream.start_stream()
 
     def callback(self, in_data, frame_count, time_info, status):
@@ -61,10 +55,8 @@ class AudioDriver:
 
     def stop(self):
         """Stop the audio thread."""
-        assert(pyaudio_available)
         self._stream.stop_stream()
 
     def dispose(self):
-        if(pyaudio_available):
-            self._stream.close()
-            self._p.terminate()
+        self._stream.close()
+        self._p.terminate()

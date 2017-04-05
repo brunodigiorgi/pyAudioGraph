@@ -9,6 +9,7 @@ class MixerNode(Node):
     in_wires:
     out_wires
     """
+
     def __init__(self, world, matrix):
         """
         matrix is a matrix of shape nOutChannels x nInChannels
@@ -23,7 +24,7 @@ class MixerNode(Node):
         self.w_out = [AudioOutWire(self, world.buf_len) for o in range(no)]
         self.temp_out = np.zeros((no, world.buf_len), dtype=np.float32)
         self.w_level = [[InWire(self, matrix[o, i])
-                        for i in range(ni)] for o in range(no)]
+                         for i in range(ni)] for o in range(no)]
 
         self.in_wires.extend([l for o_list in self.w_level for l in o_list])
         self.in_wires.extend(self.w_in)
@@ -35,7 +36,8 @@ class MixerNode(Node):
             self.w_out[o].buf[0, :] = 0
         for i, o in itertools.product(range(ni), range(no)):
             in_array = self.w_in[i].get_data()
-            self.w_out[o].buf[0, :] += self.w_level[o][i].get_value() * in_array[0, :]
+            self.w_out[o].buf[0, :] += self.w_level[o][i].get_data() * \
+                in_array[0, :]
 
 
 class MonizerNode(MixerNode):

@@ -2,6 +2,7 @@ import numpy as np
 
 
 class OutWire:
+
     def __init__(self, parent):
         self.parent = parent
         self._data = None
@@ -18,6 +19,7 @@ class OutWire:
 
 
 class InWire:
+
     def __init__(self, parent, default_data=None):
         self.parent = parent
         self._default_data = default_data
@@ -30,6 +32,7 @@ class InWire:
 
 
 class AudioOutWire(OutWire):
+
     def __init__(self, parent, buf_len):
         super().__init__(parent)
         self.buf = np.zeros((1, buf_len), dtype=np.float32)

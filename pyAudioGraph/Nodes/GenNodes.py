@@ -35,7 +35,7 @@ class LevelSlopeGen(Node):
             self.value = value
 
     def calc_func(self):
-        self._set_value(self.w_in.get_value())
+        self._set_value(self.w_in.get_data())
         buf_len = self.world.buf_len
         dest = self.v_temp + self.speed * (self.value - self.v_temp)
         slope = (dest - self.v_temp) / buf_len
@@ -44,6 +44,7 @@ class LevelSlopeGen(Node):
 
 
 class SinOsc(Node):
+
     def __init__(self, world):
         super().__init__(world)
 
@@ -51,7 +52,7 @@ class SinOsc(Node):
         self.w_out = AudioOutWire(self, world.buf_len)
         self.phase = 0
 
-        self.in_wires.extend([self.w_freq, self.w_level])
+        self.in_wires.extend([self.w_freq])
         self.out_wires.append(self.w_out)
 
     def calc_func(self):
