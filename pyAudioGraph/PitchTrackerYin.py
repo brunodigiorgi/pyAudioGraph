@@ -1,7 +1,12 @@
 import numpy as np
 from .Nodes.PitchTrackerNode import PitchTrackerBase
 from .AudioBuffer import RingBuffer
-import pyPitchTracking
+
+try:
+    import pyPitchTracking
+    pyPitchTracking_available = True
+except ImportError:
+    pyPitchTracking_available = False
 
 
 class PitchTrackerFramed(PitchTrackerBase):
@@ -117,8 +122,12 @@ class PitchTrackerProbContext:
 
 
 class PitchTrackerYin(PitchTrackerFramed):
+
     def __init__(self, sample_rate, frame_size=1024, hop_size=512, max_freq=1500, thresh=0.1,
                  context=PitchTrackerDetContext()):
+        if(not pyPitchTracking_available):
+            raise ImportError("pyPitchTracking is not available")
+
         super().__init__(frame_size=frame_size, hop_size=hop_size)
 
         if(not context.context_type == 'det'):
@@ -141,8 +150,12 @@ class PitchTrackerYin(PitchTrackerFramed):
 
 
 class PitchTrackerPYin(PitchTrackerFramed):
+
     def __init__(self, sample_rate, frame_size=1024, hop_size=512, max_freq=1500, min_weight=0.01,
                  context=PitchTrackerProbContext()):
+        if(not pyPitchTracking_available):
+            raise ImportError("pyPitchTracking is not available")
+
         super().__init__(frame_size=frame_size, hop_size=hop_size)
 
         if(not context.context_type == 'prob'):
