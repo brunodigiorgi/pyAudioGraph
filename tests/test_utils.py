@@ -2,11 +2,11 @@ import numpy as np
 
 
 def test_framer():
-    from pyAudioGraph import AudioBuffer
+    import pyAudioGraph as ag
 
     nchannels = 2
     x = np.arange(60).reshape(nchannels, -1)
-    ring_buffer = AudioBuffer.RingBuffer(nchannels, 60)
+    ring_buffer = ag.RingBuffer(nchannels, 60)
     ring_buffer.write(x[:, :10])
     ring_buffer.write(x[:, 10:])
 
@@ -31,11 +31,11 @@ def test_framer():
 
 
 def test_overlapper():
-    from pyAudioGraph import AudioBuffer
+    import pyAudioGraph as ag
 
     nchannels = 2
     x = np.ones(60).reshape(nchannels, -1)
-    ring_buffer = AudioBuffer.RingBuffer(nchannels, 20)
+    ring_buffer = ag.RingBuffer(nchannels, 20)
 
     # accumulate 2x30 ones
     ring_buffer.accumulate(x)
