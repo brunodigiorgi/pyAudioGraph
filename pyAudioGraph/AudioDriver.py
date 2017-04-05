@@ -1,5 +1,6 @@
 """Audio Driver module implements the audio callback using pyAudio (portaudio)."""
 
+# This conditional import is needed for passing Travis CI compilation
 try:
     import pyaudio
     pyaudio_available = True
