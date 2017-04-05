@@ -43,9 +43,9 @@ class MixerNode(Node):
 class MonizerNode(MixerNode):
     """Mixer nchannels to mono."""
 
-    def __init__(self, world, diskin_node):
-        nchannels = diskin_node.nchannels
+    def __init__(self, world, in_node):
+        nchannels = in_node.nchannels
         matrix = np.ones((1, nchannels)) / nchannels
         super().__init__(world, matrix)
         for i in range(nchannels):
-            diskin_node.w_out[i].plug_into(self.w_in[i])
+            in_node.w_out[i].plug_into(self.w_in[i])

@@ -59,10 +59,10 @@ General Usage
 
 	import pyAudioGraph as ag
 
-Create units... (see below). 
-Then add units and compile the graph
+Create and connect the units.
+Then add all the output units and compile the graph
 
-	world.append(units)
+	world.append(output_units)
 	world.sort()
 
 Run the audio graph

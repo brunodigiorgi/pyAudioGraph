@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>SimpleWavPlayer</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>PitchTracking</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11778,7 +11778,17 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Table-of-Contents">Table of Contents<a class="anchor-link" href="#Table-of-Contents">&#182;</a></h1><p><p><div class="lev1 toc-item"><a href="#Create-the-units" data-toc-modified-id="Create-the-units-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Create the units</a></div><div class="lev1 toc-item"><a href="#Connect-the-units" data-toc-modified-id="Connect-the-units-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Connect the units</a></div><div class="lev1 toc-item"><a href="#Append-the-nodes-and-then-sort-the-graph" data-toc-modified-id="Append-the-nodes-and-then-sort-the-graph-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Append the nodes and then sort the graph</a></div><div class="lev1 toc-item"><a href="#Run" data-toc-modified-id="Run-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Run</a></div></p>
+<h1 id="Table-of-Contents">Table of Contents<a class="anchor-link" href="#Table-of-Contents">&#182;</a></h1><p><p><div class="lev1 toc-item"><a href="#Create-the-units" data-toc-modified-id="Create-the-units-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Create the units</a></div><div class="lev1 toc-item"><a href="#Run" data-toc-modified-id="Run-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Run</a></div></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This tutorial requires pyPitchTracking installed <a href="https://github.com/brunodigiorgi/pyPitchTracking">https://github.com/brunodigiorgi/pyPitchTracking</a></p>
 
 </div>
 </div>
@@ -11789,20 +11799,6 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyAudioGraph</span> <span class="k">as</span> <span class="nn">ag</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># choose a wav file on your pc</span>
-<span class="n">wav_file</span> <span class="o">=</span> <span class="s1">&#39;AudioFile.wav&#39;</span>  <span class="c1"># only signed 16/32 bit supported</span>
 </pre></div>
 
 </div>
@@ -11821,63 +11817,88 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">world</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">World</span><span class="p">(</span><span class="n">nchannels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">buf_len</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nchannels</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">sample_rate</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="n">input_mode</span> <span class="o">=</span> <span class="s2">&quot;disk&quot;</span>  <span class="c1"># choose &quot;mic&quot; or &quot;disk&quot; </span>
 
-<span class="c1"># create the diskInUnit</span>
-<span class="n">audioStream</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">AudioStreamWaveFile</span><span class="p">(</span><span class="n">wav_file</span><span class="p">)</span>
-<span class="n">diskInNode</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">DiskInNode</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="n">audioStream</span><span class="p">)</span>
+<span class="c1"># parameters</span>
+<span class="n">frame_size</span> <span class="o">=</span> <span class="mi">2048</span>
+<span class="n">hop_size</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="n">pri_stab</span> <span class="o">=</span> <span class="mi">450</span>
+<span class="n">pri_vtp</span> <span class="o">=</span> <span class="o">-.</span><span class="mi">001</span>
+<span class="n">max_freq</span> <span class="o">=</span> <span class="mi">1500</span>
+<span class="n">min_weight</span> <span class="o">=</span> <span class="mf">0.4</span>
 
-<span class="c1"># create the output Unit</span>
-<span class="n">outNode</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">OutNode</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
-</pre></div>
+<span class="c1"># world</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">World</span><span class="p">(</span><span class="n">buf_len</span><span class="o">=</span><span class="n">hop_size</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">)</span>
 
-</div>
-</div>
-</div>
+<span class="k">if</span><span class="p">(</span><span class="n">input_mode</span> <span class="o">==</span> <span class="s2">&quot;disk&quot;</span><span class="p">):</span>
+    <span class="n">wav_file_path</span> <span class="o">=</span> <span class="s1">&#39;audiofile.wav&#39;</span>  <span class="c1"># set a *monophonic* audio file path</span>
+    <span class="n">astream</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">AudioStreamWaveFile</span><span class="p">(</span><span class="n">wav_file_path</span><span class="p">)</span>
+    <span class="k">assert</span><span class="p">((</span><span class="n">astream</span><span class="o">.</span><span class="n">nchannels</span> <span class="o">==</span> <span class="n">nchannels</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">astream</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">==</span> <span class="n">sample_rate</span><span class="p">))</span>
+    <span class="n">in_node</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">DiskInNode</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">astream</span><span class="p">)</span>
+<span class="k">elif</span><span class="p">(</span><span class="n">input_mode</span> <span class="o">==</span> <span class="s2">&quot;mic&quot;</span><span class="p">):</span>
+    <span class="n">in_node</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">InNode</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Connect-the-units">Connect the units<a class="anchor-link" href="#Connect-the-units">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">diskInNode</span><span class="o">.</span><span class="n">nchannels</span><span class="p">):</span>
-    <span class="n">diskInNode</span><span class="o">.</span><span class="n">w_out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">outNode</span><span class="o">.</span><span class="n">w_in</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-</pre></div>
+<span class="c1"># pitch tracking</span>
+<span class="n">context_movingviterbi</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">PitchTrackerContext</span><span class="o">.</span><span class="n">PitchTrackerProbContextMovingViterbi</span><span class="p">(</span><span class="n">pri_stab</span><span class="o">=</span><span class="n">pri_stab</span><span class="p">,</span> <span class="n">pri_vtp</span><span class="o">=</span><span class="n">pri_vtp</span><span class="p">)</span>
+<span class="n">pitch_tracker</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">PitchTrackerYin</span><span class="o">.</span><span class="n">PitchTrackerPYin</span><span class="p">(</span><span class="n">sample_rate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">,</span> 
+                                                    <span class="n">frame_size</span><span class="o">=</span><span class="n">frame_size</span><span class="p">,</span> 
+                                                    <span class="n">hop_size</span><span class="o">=</span><span class="n">hop_size</span><span class="p">,</span>
+                                                    <span class="n">max_freq</span><span class="o">=</span><span class="n">max_freq</span><span class="p">,</span> 
+                                                    <span class="n">min_weight</span><span class="o">=</span><span class="n">min_weight</span><span class="p">,</span> 
+                                                    <span class="n">context</span><span class="o">=</span><span class="n">context_movingviterbi</span><span class="p">)</span>
+<span class="n">pitch</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">PitchTrackerNode</span><span class="o">.</span><span class="n">PitchTrackerNode</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">pitch_tracker</span><span class="p">)</span>
 
-</div>
-</div>
-</div>
+<span class="c1"># control rate recorder, with 2 tracks</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">ControlRateRecorder</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Append-the-nodes-and-then-sort-the-graph">Append the nodes and then sort the graph<a class="anchor-link" href="#Append-the-nodes-and-then-sort-the-graph">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">world</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outNode</span><span class="p">)</span>
-<span class="n">world</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="c1"># rmsUnit</span>
+<span class="n">rmsUnit</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">RmsNode</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">sosc</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">SinOsc</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">OutNode</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+<span class="c1"># stereo to mono</span>
+<span class="n">stm</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">MonizerNode</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">in_node</span><span class="p">)</span>
+<span class="n">stm</span><span class="o">.</span><span class="n">w_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">pitch</span><span class="o">.</span><span class="n">w_in</span><span class="p">)</span>
+
+<span class="c1"># drive sin osc with rms level from input</span>
+<span class="n">stm</span><span class="o">.</span><span class="n">w_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">rmsUnit</span><span class="o">.</span><span class="n">w_in</span><span class="p">)</span>
+
+<span class="n">sin_osc_level</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">LevelSlopeGen</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">speed</span><span class="o">=.</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">rmsUnit</span><span class="o">.</span><span class="n">w_out</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">sin_osc_level</span><span class="o">.</span><span class="n">w_in</span><span class="p">)</span>
+<span class="n">sin_mult</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">OpMult</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">sosc</span><span class="o">.</span><span class="n">w_out</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">sin_mult</span><span class="o">.</span><span class="n">w_in1</span><span class="p">)</span>
+<span class="n">sin_osc_level</span><span class="o">.</span><span class="n">w_out</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">sin_mult</span><span class="o">.</span><span class="n">w_in2</span><span class="p">)</span>
+
+<span class="c1"># record pitch</span>
+<span class="n">pitch</span><span class="o">.</span><span class="n">w_f0</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">w_in</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">pitch</span><span class="o">.</span><span class="n">w_voiced</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">w_in</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># reproduce pitch</span>
+<span class="n">pitch</span><span class="o">.</span><span class="n">w_f0</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">sosc</span><span class="o">.</span><span class="n">w_freq</span><span class="p">)</span>
+
+<span class="c1"># level slope for smoothing voiced - non voiced transitions</span>
+<span class="n">levelSlopeUnit</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">LevelSlopeGen</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">speed</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">pitch</span><span class="o">.</span><span class="n">w_voiced</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">levelSlopeUnit</span><span class="o">.</span><span class="n">w_in</span><span class="p">)</span>
+<span class="n">mult</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">OpMult</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">sin_mult</span><span class="o">.</span><span class="n">w_out</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">mult</span><span class="o">.</span><span class="n">w_in1</span><span class="p">)</span>
+<span class="n">levelSlopeUnit</span><span class="o">.</span><span class="n">w_out</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">mult</span><span class="o">.</span><span class="n">w_in2</span><span class="p">)</span>
+
+<span class="c1"># mix input and sin</span>
+<span class="n">v_sin</span><span class="p">,</span> <span class="n">v_input</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span>
+<span class="n">mix</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">Nodes</span><span class="o">.</span><span class="n">MixerNode</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">v_sin</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">v_sin</span><span class="p">,</span> <span class="n">v_input</span><span class="p">]]))</span>
+<span class="n">mult</span><span class="o">.</span><span class="n">w_out</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">mix</span><span class="o">.</span><span class="n">w_in</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">stm</span><span class="o">.</span><span class="n">w_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">mix</span><span class="o">.</span><span class="n">w_in</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">mix</span><span class="o">.</span><span class="n">w_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">w_in</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">mix</span><span class="o">.</span><span class="n">w_out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plug_into</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">w_in</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># add output nodes and compile the graph</span>
+<span class="n">w</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">out</span><span class="p">,</span> <span class="n">rec</span><span class="p">])</span>
+<span class="n">w</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11896,13 +11917,13 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="n">world</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-<span class="n">world</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="n">w</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">w</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </pre></div>
 
 </div>

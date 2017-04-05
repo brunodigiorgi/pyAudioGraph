@@ -60,14 +60,42 @@ class Group(Node):
         stack.reverse()
         return stack
 
+    def add_parents(self):
+        """
+        This function traverses the graph with depth first search
+        Add all the nodes that are required by the nodes in self.nodesList
+        Updates self.nodesList at the end with all the nodes in the graph
+        """
+        nl = self.nodesList
+        visited, stack = set(), nl
+
+        while(stack):
+            inode = stack.pop()
+            if(inode not in visited):
+                # print("visiting " + str(inode.__class__.__name__))
+                visited.add(inode)
+                for iw in inode.in_wires:
+                    ow = iw.out_wire
+                    if(ow is not None and
+                       (ow.parent not in stack) and
+                       (ow.parent not in visited)):
+                        # print("adding " + str(ow.parent.__class__.__name__))
+                        stack.append(ow.parent)
+        self.nodesList = list(visited)
+
     def sort(self):
+        self.add_parents()  # add all the parents of the added nodes
+
         nl = self.nodesList
         nnodes = len(nl)
         connections = np.zeros((nnodes, nnodes), dtype=int)
         for i1 in range(nnodes):
             for ow in nl[i1].out_wires:
                 for iw in ow.in_wires:
-                    assert(iw.parent in nl)
+                    if(iw.parent not in nl):
+                        raise ValueError(str(iw.parent.__class__.__name__) +
+                                         " is not in the graph, although connected to " +
+                                         str(ow.parent.__class__.__name__))
                     i2 = nl.index(iw.parent)
                     connections[i1, i2] = 1
 

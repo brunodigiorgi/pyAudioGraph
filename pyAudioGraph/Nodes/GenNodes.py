@@ -30,9 +30,9 @@ class LevelSlopeGen(Node):
     def _set_value(self, value):
         if(self.world.is_running()):
             self.value = value
-            self.v_temp = value
         else:
             self.value = value
+            self.v_temp = value
 
     def calc_func(self):
         self._set_value(self.w_in.get_data())
