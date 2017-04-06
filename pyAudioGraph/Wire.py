@@ -31,6 +31,11 @@ class InWire:
         return self.out_wire._data
 
 
+# TODO: is it possible to unify OutWire and AudioOutWire?
+# OutWire(self, parent, buf_len=1)
+# self._data = np.zeros((1, buf_len), dtype=np.float32)
+# def set_data(self, in_data):
+#     self._data[:, :] = in_data
 class AudioOutWire(OutWire):
 
     def __init__(self, parent, buf_len):

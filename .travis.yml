@@ -4,7 +4,9 @@ python:
   - "3.4"
   - "3.5"
 # command to install dependencies
-install: 
+install:
+  - pip install --upgrade pip setuptools wheel
+  - pip install --only-binary=numpy,scipy numpy scipy
   - travis_retry python setup.py develop easy_install pyAudioGraph[testing]
 # command to run tests
 script: py.test
