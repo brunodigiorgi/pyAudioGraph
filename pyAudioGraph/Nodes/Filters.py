@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 from scipy import signal
 from ..AudioGraph import Node
-from ..Wire import InWire, AudioOutWire
+from ..Wire import InWire, OutWire
 
 
 def lowpass_coeff(Fs, f0, Q):
@@ -38,7 +38,7 @@ class Lowpass(Node):
         self.w_in = InWire(self)
         self.w_f0 = InWire(self, f0)
         self.w_Q = InWire(self, Q)
-        self.w_out = AudioOutWire(self, world.buf_len)
+        self.w_out = OutWire(self, world.buf_len)
         self.in_wires.extend([self.w_in, self.w_f0, self.w_Q])
         self.out_wires.append(self.w_out)
         self.reset()
@@ -54,4 +54,5 @@ class Lowpass(Node):
         b, a = lowpass_coeff(Fs, f0, Q)
 
         in_array = self.w_in.get_data()
-        self.w_out.buf[0, :], self.zi = sp.signal.lfilter(b, a, in_array[0, :], zi=self.zi)
+        out_data, self.zi = sp.signal.lfilter(b, a, in_array[0, :], zi=self.zi)
+        self.w_out.set_data(out_data)

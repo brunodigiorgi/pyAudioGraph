@@ -1,5 +1,5 @@
 from ..AudioGraph import Node
-from ..Wire import InWire, AudioOutWire
+from ..Wire import InWire, OutWire
 
 
 class OutNode(Node):
@@ -42,7 +42,7 @@ class InNode(Node):
 
         self.w_out = []
         for i in range(self.nchannels):
-            self.w_out.append(AudioOutWire(self, world.buf_len))
+            self.w_out.append(OutWire(self, world.buf_len))
 
         self.w_level = InWire(self, 1)
 
@@ -52,4 +52,4 @@ class InNode(Node):
     def calc_func(self):
         level = self.w_level.get_data()
         for i in range(self.nchannels):
-            self.w_out[i].set_buffer(self.world.inBuffer[i, :] * level)
+            self.w_out[i].set_data(self.world.inBuffer[i, :] * level)

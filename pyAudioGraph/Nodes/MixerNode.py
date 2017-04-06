@@ -1,6 +1,6 @@
 import itertools
 from ..AudioGraph import Node
-from ..Wire import InWire, AudioOutWire
+from ..Wire import InWire, OutWire
 import numpy as np
 
 
@@ -21,8 +21,8 @@ class MixerNode(Node):
         self.nOutChannels = no = matrix.shape[0]
 
         self.w_in = [InWire(self) for i in range(ni)]
-        self.w_out = [AudioOutWire(self, world.buf_len) for o in range(no)]
-        self.temp_out = np.zeros((no, world.buf_len), dtype=np.float32)
+        self.w_out = [OutWire(self, world.buf_len) for o in range(no)]
+        self.temp_out = np.zeros((1, world.buf_len), dtype=np.float32)
         self.w_level = [[InWire(self, matrix[o, i])
                          for i in range(ni)] for o in range(no)]
 
@@ -32,12 +32,13 @@ class MixerNode(Node):
 
     def calc_func(self):
         ni, no = self.nInChannels, self.nOutChannels
+
         for o in range(no):
-            self.w_out[o].buf[0, :] = 0
-        for i, o in itertools.product(range(ni), range(no)):
-            in_array = self.w_in[i].get_data()
-            self.w_out[o].buf[0, :] += self.w_level[o][i].get_data() * \
-                in_array[0, :]
+            self.temp_out[:] = 0
+            for i in range(ni):
+                in_array = self.w_in[i].get_data()
+                self.temp_out[0, :] += self.w_level[o][i].get_data() * in_array[0, :]
+            self.w_out[o].set_data(self.temp_out)
 
 
 class MonizerNode(MixerNode):

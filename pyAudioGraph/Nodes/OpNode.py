@@ -1,16 +1,16 @@
 from ..AudioGraph import Node
-from ..Wire import InWire, OutWire, AudioOutWire
+from ..Wire import InWire, OutWire
 import numpy as np
 
 
-class AudioOpBinary(Node):
+class OpBinary(Node):
 
-    def __init__(self, world, binary_fn):
+    def __init__(self, world, binary_fn, out_len=1):
         super().__init__(world)
         self.binary_fn = binary_fn
         self.w_in1 = InWire(self)
         self.w_in2 = InWire(self)
-        self.w_out = AudioOutWire(self, world.buf_len)
+        self.w_out = OutWire(self, world.buf_len)
 
         self.in_wires.extend([self.w_in1, self.w_in2])
         self.out_wires.append(self.w_out)
@@ -18,25 +18,16 @@ class AudioOpBinary(Node):
     def calc_func(self):
         in_array1 = self.w_in1.get_data()
         in_array2 = self.w_in2.get_data()
-        self.w_out.set_buffer(self.binary_fn(in_array1, in_array2))
+        self.w_out.set_data(self.binary_fn(in_array1, in_array2))
 
 
-class ControlOpBinary(Node):
+ControlOpBinary = OpBinary
+
+
+class AudioOpBinary(OpBinary):
 
     def __init__(self, world, binary_fn):
-        super().__init__(world)
-        self.binary_fn = binary_fn
-        self.w_in1 = InWire(self)
-        self.w_in2 = InWire(self)
-        self.w_out = OutWire(self)
-
-        self.in_wires.extend([self.w_in1, self.w_in2])
-        self.out_wires.append(self.w_out)
-
-    def calc_func(self):
-        in1 = self.w_in1.get_data()
-        in2 = self.w_in2.get_data()
-        self.w_out.set_data(self.binary_fn(in1, in2))
+        super().__init__(world, binary_fn, out_len=world.buf_len)
 
 
 class AudioOpMult(AudioOpBinary):

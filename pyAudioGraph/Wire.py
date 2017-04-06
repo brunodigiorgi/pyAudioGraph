@@ -3,13 +3,13 @@ import numpy as np
 
 class OutWire:
 
-    def __init__(self, parent):
+    def __init__(self, parent, buf_len=1):
         self.parent = parent
-        self._data = None
+        self._data = np.zeros((1, buf_len), dtype=np.float32)
         self.in_wires = []
 
-    def set_data(self, data):
-        self._data = data
+    def set_data(self, in_data):
+        self._data[:, :] = in_data
 
     def plug_into(self, in_wire):
         if(self.parent == in_wire.parent):
@@ -28,20 +28,7 @@ class InWire:
     def get_data(self):
         if(self.out_wire is None):  # not connected
             return self._default_data
-        return self.out_wire._data
-
-
-# TODO: is it possible to unify OutWire and AudioOutWire?
-# OutWire(self, parent, buf_len=1)
-# self._data = np.zeros((1, buf_len), dtype=np.float32)
-# def set_data(self, in_data):
-#     self._data[:, :] = in_data
-class AudioOutWire(OutWire):
-
-    def __init__(self, parent, buf_len):
-        super().__init__(parent)
-        self.buf = np.zeros((1, buf_len), dtype=np.float32)
-        self._data = self.buf
-
-    def set_buffer(self, in_buffer):
-        self.buf[0, :] = in_buffer[:]
+        out_data = self.out_wire._data
+        if(all([s_ == 1 for s_ in out_data.shape])):  # control (scalar) out_data
+            return np.squeeze(out_data)
+        return out_data  # audio (vector) out_data

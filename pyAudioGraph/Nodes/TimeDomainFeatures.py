@@ -1,6 +1,6 @@
 import numpy as np
 from ..AudioGraph import Node
-from ..Wire import InWire, AudioOutWire
+from ..Wire import InWire, OutWire
 
 
 class RmsNode(Node):
@@ -9,7 +9,7 @@ class RmsNode(Node):
     def __init__(self, world):
         super().__init__(world)
         self.w_in = InWire(self)
-        self.w_out = AudioOutWire(self, world.buf_len)
+        self.w_out = OutWire(self)
 
         self.in_wires.append(self.w_in)
         self.out_wires.append(self.w_out)

@@ -1,5 +1,5 @@
 from .AudioBuffer import AudioBuffer, RingBuffer
-from .Wire import InWire, OutWire, AudioOutWire
+from .Wire import InWire, OutWire
 from .AudioGraph import Node, Group
 from .World import World
 from .AudioStream import AudioStreamWaveFile

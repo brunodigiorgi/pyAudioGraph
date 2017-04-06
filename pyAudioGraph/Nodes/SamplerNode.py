@@ -1,6 +1,6 @@
 from ..AudioBuffer import RingBuffer
 from ..AudioGraph import Node
-from ..Wire import AudioOutWire, InWire
+from ..Wire import OutWire, InWire
 import numpy as np
 
 
@@ -10,7 +10,7 @@ class SamplerNode(Node):
     Wires
     -----
     out_wires:
-        w_out : AudioOutWire
+        w_out : OutWire
     in_wires:
         w_trigger_list : trigger_list = [(t_id, t_pos, t_scale), ...]
             t_id is the buffer id (int)
@@ -24,7 +24,7 @@ class SamplerNode(Node):
         self.nchannels = nout = nchannels
         self.buffers = []
         self.ringBuffer = RingBuffer(self.nchannels, world.buf_len)
-        self.w_out = [AudioOutWire(self, world.buf_len) for o in range(nout)]
+        self.w_out = [OutWire(self, world.buf_len) for o in range(nout)]
         self.w_trigger_list = InWire(self)
 
         # add w_in_trigger (substitutes the method set_trigger)
@@ -52,7 +52,7 @@ class SamplerNode(Node):
         # pre-conditions
         if(nb == 0):
             for o in range(no):
-                self.w_out[o].buf[:] = 0
+                self.w_out[o].set_data(0)
             return
 
         trigger_list = self.w_trigger_list.get_data()
@@ -65,4 +65,4 @@ class SamplerNode(Node):
         self.ringBuffer.advance_read_index(self.world.buf_len)
 
         for o in range(no):
-            self.w_out[o].set_buffer(self.temp_out[o, :])
+            self.w_out[o].set_data(self.temp_out[o, :])
