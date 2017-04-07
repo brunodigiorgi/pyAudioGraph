@@ -1,9 +1,9 @@
 import numpy as np
 from ..BufferedAudioStream import BufferedAudioStream
 from ..AudioGraph import Node
-from ..Wire import OutWire
 from ..Range import RangeQueue
 from ..CmdQueue import AsyncCmdQueue
+from . import OutWire
 
 
 class DiskInNode(Node):
@@ -26,10 +26,11 @@ class DiskInNode(Node):
 
         self.outBuffer = np.zeros((self.baf.nchannels, world.buf_len))
         self.w_out = []
+        self.w_pos = OutWire(self)
         for i in range(self.nchannels):
             self.w_out.append(OutWire(self, world.buf_len))
 
-        self.out_wires.extend(self.w_out)
+        self.out_wires.extend(self.w_out + [self.w_pos])
 
     def calc_func(self):
         self.rangeQueue.clear()
@@ -37,6 +38,7 @@ class DiskInNode(Node):
         self.baf.read(self.outBuffer, out_range_queue=self.rangeQueue, async=async)
         for i in range(self.nchannels):
             self.w_out[i].set_data(self.outBuffer[i])
+        self.w_pos.set_data(self.baf.pos())
 
     def enable_loop(self, flag):
         self.baf.enable_loop(flag)

@@ -2,11 +2,19 @@ import numpy as np
 import scipy as sp
 from scipy import signal
 from ..AudioGraph import Node
-from ..Wire import InWire, OutWire
+from ..Wire import InWire
+from .OpNode import OutWire
 
 
 def ramp(start, length, slope):
-        return np.linspace(start, start + length * slope, length)
+    return np.linspace(start, start + length * slope, length)
+
+
+def phases_ramp(start_phase, length, start_freq, end_freq, sample_rate):
+    eps = 0.01
+    fr = np.logspace(np.log10(start_freq + eps), np.log10(end_freq + eps), num=length)
+    phase = start_phase + np.cumsum(fr / sample_rate * 2 * np.pi)
+    return phase
 
 
 class SlopeGen(Node):
@@ -71,6 +79,7 @@ class SignalOsc(Node):
         self.w_freq = InWire(self, 400)
         self.w_out = OutWire(self, world.buf_len)
         self.phase = 0
+        self.prev_f = self.w_freq.get_data()
 
         self.in_wires.extend([self.w_freq])
         self.out_wires.append(self.w_out)
@@ -80,10 +89,43 @@ class SignalOsc(Node):
         sr = self.world.sample_rate
         f = self.w_freq.get_data()
 
-        p = ramp(self.phase, buf_len, f / sr * 2 * np.pi)
+        # p = ramp(self.phase, buf_len, f / sr * 2 * np.pi)
+        p = phases_ramp(self.phase, buf_len, self.prev_f, f, sr)
         self.w_out.set_data(self.signal_fn(p))
         self.phase = p[-1] + f / sr * 2 * np.pi
         self.phase = np.mod(self.phase, 2 * np.pi)
+
+        self.prev_f = f
+
+
+class ControlOsc(Node):
+
+    def __init__(self, world, signal_fn):
+        super().__init__(world)
+        self.signal_fn = signal_fn
+
+        self.w_freq = InWire(self, 6)
+        self.w_out = OutWire(self)
+        self.phase = 0
+        self.prev_f = self.w_freq.get_data()
+
+        self.in_wires.extend([self.w_freq])
+        self.out_wires.append(self.w_out)
+
+    def calc_func(self):
+        buf_len = self.world.buf_len
+        sr = self.world.sample_rate
+        f = self.w_freq.get_data()
+
+        self.w_out.set_data(self.signal_fn(self.phase))
+        self.phase = self.phase + buf_len * f / sr * 2 * np.pi
+        self.phase = np.mod(self.phase, 2 * np.pi)
+
+
+class ControlSinOsc(ControlOsc):
+
+    def __init__(self, world):
+        super().__init__(world, np.sin)
 
 
 class SinOsc(SignalOsc):
