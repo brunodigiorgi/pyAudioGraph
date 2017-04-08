@@ -1,7 +1,6 @@
 import numpy as np
 import scipy as sp
-from scipy import signal
-from .. import Node, InWire, OutWire, RingBuffer
+from .. import Node, InWire, OutWire
 
 
 def lowpass_coeff(Fs, f0, Q):
@@ -68,8 +67,9 @@ class ControlFIRFilter(Node):
         """
         super().__init__(world)
         self.taps = np.array(taps, dtype=np.float32)
-        self.temp_buffer = np.zeros((1, len(self.taps)))
-        self.ringbuffer = RingBuffer(1, len(self.taps))
+        self.rev_taps = self.taps[::-1]
+        self.temp_buffer = np.zeros(len(self.taps))
+        self.i = 0
         self.w_in = InWire(self)
         self.w_out = OutWire(self)
         self.in_wires.append(self.w_in)
@@ -77,14 +77,16 @@ class ControlFIRFilter(Node):
         self.reset()
 
     def reset(self):
-        self.ringbuffer.clear()
-        self.ringbuffer.advance_write_index(len(self.taps) - 1)
+        self.temp_buffer[:] = 0
+        self.i = 0
 
     def calc_func(self):
+        L = len(self.taps)
         in_ = self.w_in.get_data()
-        to_write = np.array([[in_]], np.float32)
-        self.ringbuffer.write(to_write)  # write 1
-        self.ringbuffer.read(self.temp_buffer)  # read all
-        self.ringbuffer.advance_read_index(1)  # advance read 1
-        out_ = np.dot(self.temp_buffer[0][::-1], self.taps)
+        self.temp_buffer[self.i] = in_
+        out_ = np.dot(self.temp_buffer[:(self.i + 1)], self.rev_taps[L - (self.i + 1):L])
+        out_ += np.dot(self.temp_buffer[(self.i + 1):], self.rev_taps[:L - (self.i + 1)])
+        self.i += 1
+        if(self.i == len(self.taps)):
+            self.i = 0
         self.w_out.set_data(out_)
