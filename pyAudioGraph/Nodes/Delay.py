@@ -1,5 +1,4 @@
-from .. import Node, RingBuffer, InWire
-from . import OutWire
+from .. import Node, RingBuffer, InWire, OutWire
 import numpy as np
 
 
@@ -30,4 +29,4 @@ class Delay(Node):
         self.out_temp[:] = self.out_temp[:] * in_weight + in_array[:]
         self.ringbuffer.advance_read_index(buf_len)
         self.w_out.set_data(self.out_temp)
-        self.ringbuffer.write(in_array)
+        self.ringbuffer.write(self.out_temp)

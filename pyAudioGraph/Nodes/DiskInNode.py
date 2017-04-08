@@ -3,7 +3,7 @@ from ..BufferedAudioStream import BufferedAudioStream
 from ..AudioGraph import Node
 from ..Range import RangeQueue
 from ..CmdQueue import AsyncCmdQueue
-from . import OutWire
+from .. import OutWire
 
 
 class DiskInNode(Node):

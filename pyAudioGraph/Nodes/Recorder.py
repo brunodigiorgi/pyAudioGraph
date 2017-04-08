@@ -1,5 +1,5 @@
 import numpy as np
-from ..Wire import InWire
+from .. import InWire
 from ..AudioGraph import Node
 
 

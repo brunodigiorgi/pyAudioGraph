@@ -1,6 +1,6 @@
 import itertools
 from ..AudioGraph import Node
-from ..Wire import InWire, OutWire
+from .. import InWire, OutWire
 import numpy as np
 
 

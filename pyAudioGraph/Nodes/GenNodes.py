@@ -2,8 +2,7 @@ import numpy as np
 import scipy as sp
 from scipy import signal
 from ..AudioGraph import Node
-from ..Wire import InWire
-from .OpNode import OutWire
+from .. import InWire, OutWire
 
 
 def ramp(start, length, slope):

@@ -1,6 +1,6 @@
 from ..AudioBuffer import RingBuffer
 from ..AudioGraph import Node
-from ..Wire import OutWire, InWire
+from .. import InWire, OutWire
 import numpy as np
 
 

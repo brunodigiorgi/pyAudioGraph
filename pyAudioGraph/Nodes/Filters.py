@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 from scipy import signal
 from ..AudioGraph import Node
-from ..Wire import InWire, OutWire
+from .. import InWire, OutWire
 
 
 def lowpass_coeff(Fs, f0, Q):
