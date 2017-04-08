@@ -1,8 +1,7 @@
 import numpy as np
 import scipy as sp
 from scipy import signal
-from ..AudioGraph import Node
-from .. import InWire, OutWire
+from .. import Node, InWire, OutWire, RingBuffer
 
 
 def lowpass_coeff(Fs, f0, Q):
@@ -56,3 +55,36 @@ class Lowpass(Node):
         in_array = self.w_in.get_data()
         out_data, self.zi = sp.signal.lfilter(b, a, in_array[0, :], zi=self.zi)
         self.w_out.set_data(out_data)
+
+
+class ControlFIRFilter(Node):
+    """
+    A FIR filter for control signals
+    """
+
+    def __init__(self, world, taps):
+        """
+        taps: np.ndarray 1-dim, coefficients of the filter
+        """
+        super().__init__(world)
+        self.taps = np.array(taps, dtype=np.float32)
+        self.temp_buffer = np.zeros((1, len(self.taps)))
+        self.ringbuffer = RingBuffer(1, len(self.taps))
+        self.w_in = InWire(self)
+        self.w_out = OutWire(self)
+        self.in_wires.append(self.w_in)
+        self.out_wires.append(self.w_out)
+        self.reset()
+
+    def reset(self):
+        self.ringbuffer.clear()
+        self.ringbuffer.advance_write_index(len(self.taps) - 1)
+
+    def calc_func(self):
+        in_ = self.w_in.get_data()
+        to_write = np.array([[in_]], np.float32)
+        self.ringbuffer.write(to_write)  # write 1
+        self.ringbuffer.read(self.temp_buffer)  # read all
+        self.ringbuffer.advance_read_index(1)  # advance read 1
+        out_ = np.dot(self.temp_buffer[0][::-1], self.taps)
+        self.w_out.set_data(out_)

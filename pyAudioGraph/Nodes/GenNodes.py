@@ -69,6 +69,32 @@ class AudioSlopeGen(SlopeGen):
         self.v_temp = dest
 
 
+class ControlSeqGen(Node):
+    """
+    Mostly used for testing
+
+    w_out : outputs 1 elements of the given seq each cycle
+    """
+
+    def __init__(self, world, seq):
+        super().__init__(world)
+        self.seq = np.array(seq, dtype=np.float32)
+        self.w_out = OutWire(self)
+        self.out_wires.append(self.w_out)
+        self.reset()
+
+    def reset(self):
+        self.i = 0
+
+    def calc_func(self):
+        out_ = self.seq[self.i]
+        self.w_out.set_data(out_)
+        self.i += 1
+        if(self.i == len(self.seq)):
+            self.i = 0
+
+
+
 class SignalOsc(Node):
 
     def __init__(self, world, signal_fn):
