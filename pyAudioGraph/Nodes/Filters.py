@@ -42,7 +42,9 @@ class Lowpass(Node):
         self.reset()
 
     def reset(self):
-        self.zi = np.zeros((2,))  # initial condition for the filter
+        len_a = len_b = 3
+        len_zi = max(len_a, len_b) - 1  # see scipy.signal.lfilter docs
+        self.zi = np.zeros((len_zi,))  # initial condition for the filter
 
     def calc_func(self):
         # buf_len = self.world.buf_len

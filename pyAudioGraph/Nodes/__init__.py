@@ -1,5 +1,3 @@
-from .. import OpUnary, OpBinary
-from .. import AudioOpBinary, ControlOpBinary, ControlOpUnary, AudioOpMult, ControlOpMult
 from .IONodes import OutNode, InNode
 from .MixerNode import MixerNode, MonizerNode
 from .SamplerNode import SamplerNode
