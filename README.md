@@ -21,16 +21,22 @@ Install portaudio on mac (tested on osx 10.11):
 	make 
 	make install
 
-Install portaudio on windows 7 (tested with mingw):
+Install portaudio on windows 7 (mingw):
 	
 	./configure
 	make 
 	make install
 
+Install portaudio on windows 7 (msvc with visual-cpp-build-tools http://landinghub.visualstudio.com/visual-cpp-build-tools):
+
+	cd build/msvc/
+	path/to/vcvarsall.bat x64
+	cmake -G "Visual Studio 14 2015 Win64" ../../
+	MSBuild portaudio.sln
+
 Install pyAudio
 
 	pip3 install pyAudio
-	
 
 Depending on where you installed portaudio you may need to add its path:
 

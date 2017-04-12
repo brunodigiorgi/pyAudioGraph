@@ -64,6 +64,8 @@ class OutWire(OutWire):
             op = Op(lambda x: x + other)
             return op(self)
 
+    __radd__ = __add__
+
     def __mul__(self, other):
         if other.__class__.__name__ == "OutWire":
             op = Op(np.multiply)
@@ -71,3 +73,47 @@ class OutWire(OutWire):
         else:
             op = Op(lambda x: x * other)
             return op(self)
+
+    __rmul__ = __mul__
+
+    def __sub__(self, other):
+        if other.__class__.__name__ == "OutWire":
+            op = Op(np.subtract)
+            return op(self, other)
+        else:
+            op = Op(lambda x: x - other)
+            return op(self)
+
+    def __rsub__(self, other):
+        if other.__class__.__name__ == "OutWire":
+            op = Op(np.subtract)
+            return op(other, self)
+        else:
+            op = Op(lambda x: other - x)
+            return op(self)
+
+    def __truediv__(self, other):
+        if other.__class__.__name__ == "OutWire":
+            op = Op(np.divide)
+            return op(self, other)
+        else:
+            op = Op(lambda x: x / other)
+            return op(self)
+
+    def __rtruediv__(self, other):
+        if other.__class__.__name__ == "OutWire":
+            op = Op(np.divide)
+            return op(other, self)
+        else:
+            op = Op(lambda x: other / x)
+            return op(self)
+
+    def clip(self, a_min, a_max):
+        op = Op(lambda x: np.clip(x, a_min, a_max))
+        return op(self)
+
+    def range_to_unit(self, a_min, a_max, invert=False):
+        a = 1 if invert else 0
+        b = -1 if invert else 1
+        op = Op(lambda x: a + b * (1 / (a_max - a_min)) * (np.clip(x, a_min, a_max) - a_min))
+        return op(self)
