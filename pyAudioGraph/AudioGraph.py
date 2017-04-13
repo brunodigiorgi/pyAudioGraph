@@ -94,7 +94,7 @@ class Group(Node):
                 for iw in ow.in_wires:
                     if(iw.parent not in nl):
                         raise ValueError(str(iw.parent.__class__.__name__) +
-                                         " is not in the graph, although connected to " +
+                                         " is not in the graph, although connected to the output of " +
                                          str(ow.parent.__class__.__name__))
                     i2 = nl.index(iw.parent)
                     connections[i1, i2] = 1
