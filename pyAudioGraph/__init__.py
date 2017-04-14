@@ -6,5 +6,5 @@ from .AudioStream import AudioStreamWaveFile
 from .CmdQueue import LambdaCommand, AsyncCmdQueue
 from .Range import Range, RangeQueue
 from .MovingViterbi import MovingViterbi
-from .OpNodes import Op, OutWire
+from .OpNodes import Op, OutWire, pass_thru
 from . import Nodes

@@ -17,12 +17,12 @@ class Op:
 
     def __call__(self, *w_out_tuple):
         n_w_out = len(w_out_tuple)
-        assert(n_w_out > 0)
+        assert (n_w_out > 0)
         max_len = 0
         w = w_out_tuple[0].parent.world
         for w_out in w_out_tuple:
-            assert(w_out.__class__.__name__ == "OutWire")
-            assert(w == w_out.parent.world)
+            assert (w_out.__class__.__name__ == "OutWire")
+            assert (w == w_out.parent.world)
             max_len = max(max_len, w_out._data.shape[1])
 
         op_node = OpNode(w, self.fn, n_in=n_w_out, out_len=max_len)
@@ -47,7 +47,7 @@ class OpNode(Node):
 
     def __call__(self, *out_wires_tuple):
         nout_wires = len(out_wires_tuple)
-        assert(nout_wires == self.n_in)
+        assert (nout_wires == self.n_in)
         for ow, iw in zip(out_wires_tuple, self.w_in):
             ow.plug_into(iw)
         return self.w_out
@@ -117,3 +117,26 @@ class OutWire(OutWire):
         b = -1 if invert else 1
         op = Op(lambda x: a + b * (1 / (a_max - a_min)) * (np.clip(x, a_min, a_max) - a_min))
         return op(self)
+
+
+def pass_thru(parent, out_wire):
+    """
+    Connect out_wire though this unit.
+    Creates a dummy InWire and adds it to parent.in_wires, for graph sorting.
+    The out_wire is returned, for an understandable syntax.
+    
+    Parameters
+    ----------
+    parent: Node
+    out_wire: OutWire
+
+    Returns
+    -------
+    out_wire: OutWire
+        the input parameter
+
+    """
+    w_in = InWire(parent)  # In wire is dummy used only for graph sorting
+    parent.in_wires.append(w_in)
+    out_wire.plug_into(w_in)
+    return out_wire
