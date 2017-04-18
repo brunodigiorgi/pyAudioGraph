@@ -26,10 +26,6 @@ class MixerNode(Node):
         self.w_level = [[InWire(self, matrix[o, i])
                          for i in range(ni)] for o in range(no)]
 
-        self.in_wires.extend([l for o_list in self.w_level for l in o_list])
-        self.in_wires.extend(self.w_in)
-        self.out_wires.extend(self.w_out)
-
     def calc_func(self):
         ni, no = self.nInChannels, self.nOutChannels
 

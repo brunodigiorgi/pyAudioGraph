@@ -37,8 +37,6 @@ class Lowpass(Node):
         self.w_f0 = InWire(self, f0)
         self.w_Q = InWire(self, Q)
         self.w_out = OutWire(self, world.buf_len)
-        self.in_wires.extend([self.w_in, self.w_f0, self.w_Q])
-        self.out_wires.append(self.w_out)
         self.reset()
 
     def reset(self):
@@ -74,8 +72,6 @@ class ControlFIRFilter(Node):
         self.i = 0
         self.w_in = InWire(self)
         self.w_out = OutWire(self)
-        self.in_wires.append(self.w_in)
-        self.out_wires.append(self.w_out)
         self.reset()
 
     def reset(self):

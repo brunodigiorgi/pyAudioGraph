@@ -52,7 +52,7 @@ class World:
 
     def start(self):
         """Start the audio thread if not already running."""
-        if(not self._isRunning):
+        if not self._isRunning:
             self._audioDriver.start()
             self._isRunning = True
 
@@ -69,7 +69,7 @@ class World:
 
     def stop(self):
         """Stop the audio thread if running."""
-        if(self._isRunning):
+        if self._isRunning:
             self._audioDriver.stop()
             self._isRunning = False
 
@@ -84,7 +84,7 @@ class World:
         """
         self.nrt = True
         self._isRunning = True
-        while(not stop_condition()):
+        while not stop_condition():
             self._topGroup.calc_func()
         self._isRunning = False
         self.nrt = False

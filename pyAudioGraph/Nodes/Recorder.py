@@ -18,8 +18,6 @@ class ControlRateRecorder(Node):
             self.w_in.append(InWire(self))
             self.data.append(np.zeros(self.size, dtype=np.float32))
 
-        self.in_wires.extend(self.w_in)
-
     def calc_func(self):
         for i in range(self.nchannels):
             in_scalar = self.w_in[i].get_data()
@@ -58,8 +56,6 @@ class AudioRateRecorder(Node):
         for i in range(self.nchannels):
             self.w_in.append(InWire(self))
             self.data.append(np.zeros(self.size, dtype=np.float32))
-
-        self.in_wires.extend(self.w_in)
 
     def calc_func(self):
         b = self.world.buf_len

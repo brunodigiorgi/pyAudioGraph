@@ -13,8 +13,6 @@ class Delay(Node):
         self.w_in_weight = InWire(self, weight)
         self.w_out = OutWire(self, world.buf_len)
         self.out_temp = np.zeros((1, world.buf_len), dtype=np.float32)
-        self.in_wires.extend([self.w_in, self.w_in_weight])
-        self.out_wires.append(self.w_out)
         self.reset()
 
     def reset(self):

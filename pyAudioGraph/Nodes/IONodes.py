@@ -16,11 +16,7 @@ class OutNode(Node):
         self.w_in = []
         for i in range(self.nchannels):
             self.w_in.append(InWire(self))
-
         self.w_level = InWire(self, 1)
-
-        self.in_wires.append(self.w_level)
-        self.in_wires.extend(self.w_in)
 
     def calc_func(self):
         level = self.w_level.get_data()
@@ -43,11 +39,7 @@ class InNode(Node):
         self.w_out = []
         for i in range(self.nchannels):
             self.w_out.append(OutWire(self, world.buf_len))
-
         self.w_level = InWire(self, 1)
-
-        self.in_wires.append(self.w_level)
-        self.out_wires.extend(self.w_out)
 
     def calc_func(self):
         level = self.w_level.get_data()

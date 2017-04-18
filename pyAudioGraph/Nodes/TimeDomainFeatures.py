@@ -11,9 +11,6 @@ class RmsNode(Node):
         self.w_in = InWire(self)
         self.w_out = OutWire(self)
 
-        self.in_wires.append(self.w_in)
-        self.out_wires.append(self.w_out)
-
     def calc_func(self):
         buf_len = self.world.buf_len
         in_array = self.w_in.get_data()

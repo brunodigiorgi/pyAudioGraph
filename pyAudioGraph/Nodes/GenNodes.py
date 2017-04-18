@@ -31,10 +31,7 @@ class SlopeGen(Node):
         self.v_temp = initial_value
         self.speed = speed
         self.w_in = InWire(self, initial_value)
-        self.in_wires.append(self.w_in)
-
         self.w_out = OutWire(self, buf_len=out_len)
-        self.out_wires.append(self.w_out)
 
     def _set_value(self, value):
         if(self.world.is_running()):
@@ -106,9 +103,6 @@ class SignalOsc(Node):
         self.phase = 0
         self.prev_f = self.w_freq.get_data()
 
-        self.in_wires.extend([self.w_freq])
-        self.out_wires.append(self.w_out)
-
     def calc_func(self):
         buf_len = self.world.buf_len
         sr = self.world.sample_rate
@@ -133,9 +127,6 @@ class ControlOsc(Node):
         self.w_out = OutWire(self)
         self.phase = 0
         self.prev_f = self.w_freq.get_data()
-
-        self.in_wires.extend([self.w_freq])
-        self.out_wires.append(self.w_out)
 
     def calc_func(self):
         buf_len = self.world.buf_len

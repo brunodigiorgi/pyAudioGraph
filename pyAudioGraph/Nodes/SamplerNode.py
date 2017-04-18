@@ -25,12 +25,8 @@ class SamplerNode(Node):
         self.nchannels = nout = nchannels
         self.buffers = []
         self.ringBuffer = RingBuffer(self.nchannels, world.buf_len)
-        self.w_out = [OutWire(self, world.buf_len) for o in range(nout)]
+        self.w_out = [OutWire(self, world.buf_len) for _ in range(nout)]
         self.w_trigger_list = ObjInWire(self)
-
-        # add w_in_trigger (substitutes the method set_trigger)
-        self.in_wires.append(self.w_trigger_list)
-        self.out_wires.extend(self.w_out)
 
         self.temp_out = np.zeros((nout, world.buf_len), dtype=np.float32)
         self.trigger_list = []
